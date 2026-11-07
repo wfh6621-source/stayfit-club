@@ -1,0 +1,1215 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7A1E3A">
+<meta name="description" content="{{NAME}} · {{SUB}} 会员积分与打卡">
+<link rel="icon" type="image/png" sizes="64x64" href="/icon-64.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="{{SHORT}}">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>{{NAME}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&family=Sora:wght@500;700;800&display=swap">
+<style>
+/* Layout: a phone-first member app (max 480px column) with a bottom tab bar; staff get an extra 管理 tab. */
+:root{
+  --bg:#FBF5F3; --surface:#FFFFFF; --surface-2:#F7EEEC; --ink:#2A1419; --muted:#7D6A6E; --line:#EADCDA;
+  --wine:#7A1E3A; --wine-deep:#561226; --on-wine:#FFF7F2; --wine-soft:#F6E3E8;
+  --gold:#C9851F; --gold-soft:#FBEBCC; --ok:#2E7D5B; --ok-soft:#DDF0E6; --warn:#B4581E; --warn-soft:#FBE6D6;
+  --shadow:0 6px 24px rgba(86,18,38,.08);
+  --k1:#B0274E;--k1s:#FBE3EA;--k2:#C76A10;--k2s:#FDEBD6;--k3:#2E8657;--k3s:#DFF3E8;--k4:#2463B0;--k4s:#DFEBFA;--k5:#7A44B8;--k5s:#EEE4FA;--k6:#0F8A8A;--k6s:#D9F2F1;
+  --f-display:"Noto Serif SC","Songti SC",serif; --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif; --f-num:"Sora","Noto Sans SC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#170E11; --surface:#21151A; --surface-2:#2A1B21; --ink:#F5E9EA; --muted:#B49FA4; --line:#3A262D;
+  --wine:#C9557A; --wine-deep:#6A1A33; --on-wine:#FFF7F2; --wine-soft:#3A1C27;
+  --gold:#E8B35A; --gold-soft:#3A2B14; --ok:#6CC59A; --ok-soft:#173528; --warn:#EE9A62; --warn-soft:#3B2416;
+  --shadow:0 6px 24px rgba(0,0,0,.35); --k1:#F07FA0;--k1s:#3F1A26;--k2:#F2A55A;--k2s:#3D2814;--k3:#72CF9C;--k3s:#163528;--k4:#7FB2F2;--k4s:#16273F;--k5:#BE98EE;--k5s:#2B1E3F;--k6:#5FD3CF;--k6s:#123332; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#170E11; --surface:#21151A; --surface-2:#2A1B21; --ink:#F5E9EA; --muted:#B49FA4; --line:#3A262D;
+  --wine:#C9557A; --wine-deep:#6A1A33; --on-wine:#FFF7F2; --wine-soft:#3A1C27;
+  --gold:#E8B35A; --gold-soft:#3A2B14; --ok:#6CC59A; --ok-soft:#173528; --warn:#EE9A62; --warn-soft:#3B2416;
+  --shadow:0 6px 24px rgba(0,0,0,.35); --k1:#F07FA0;--k1s:#3F1A26;--k2:#F2A55A;--k2s:#3D2814;--k3:#72CF9C;--k3s:#163528;--k4:#7FB2F2;--k4s:#16273F;--k5:#BE98EE;--k5s:#2B1E3F;--k6:#5FD3CF;--k6s:#123332; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:20px;line-height:1.5}
+.app{max-width:480px;margin:0 auto;min-height:100vh;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px calc(92px + env(safe-area-inset-bottom,0px))}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--wine);outline-offset:2px;border-radius:8px}
+h1,h2,h3{margin:0;text-wrap:balance}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0 14px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:11px;display:block;flex:none}
+.brand b{font-family:var(--f-display);font-size:23px;display:block;line-height:1.1}
+.brand small{color:var(--muted);font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+.demo{font-size:15px;padding:4px 8px;border-radius:99px;background:var(--gold-soft);color:var(--gold);font-weight:700;white-space:nowrap;flex:none}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-radius:20px;background:linear-gradient(135deg,var(--wine) 0%,var(--wine-deep) 100%);color:var(--on-wine);padding:22px 20px;min-height:168px}
+.hero.has-img{background-size:cover;background-position:center}
+.hero.has-img::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(60,10,25,.85),rgba(60,10,25,.15))}
+.hero>*{position:relative}
+.hero.center{padding-bottom:44px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hero.center h1,.hero.center p{margin-inline:auto}
+.giftbox{width:1.25em;height:1.25em;vertical-align:-.22em;margin-left:.2em;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
+@media (prefers-reduced-motion:no-preference){.giftbox{animation:bob 2.4s ease-in-out infinite}}
+@keyframes bob{50%{transform:translateY(-4px) rotate(-4deg)}}
+.hero .eyebrow{font-size:15px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.hero h1{font-family:var(--f-display);line-height:1.35;font-size:32px;margin:6px 0 8px;max-width:15em}
+.hero p{margin:0;opacity:.85;font-size:17px;max-width:24em}
+.coins{position:absolute;right:-18px;bottom:-22px;width:150px;height:150px;pointer-events:none}
+.hero.has-img .coins{display:none}
+
+/* member card */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px}
+.mcard{margin-top:-28px;margin-inline:10px;position:relative;box-shadow:var(--shadow)}
+.mrow{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.mname{font-weight:700}
+.tier{display:inline-flex;align-items:center;gap:4px;font-size:15px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:99px;text-transform:uppercase}
+.tier.Silver{background:var(--surface-2);color:var(--muted)}
+.tier.Gold{background:var(--gold-soft);color:var(--gold)}
+.tier.Platinum{background:var(--wine-soft);color:var(--wine)}
+.pts{font-family:var(--f-num);font-weight:800;font-size:44px;line-height:1;color:var(--wine)}
+.pin{font-size:28px;letter-spacing:.5em;text-align:center}
+.pts small{font-size:16px;font-weight:500;color:var(--muted);margin-left:4px;font-family:var(--f-body)}
+.sub{color:var(--muted);font-size:16px}
+.bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--wine));border-radius:99px}
+
+/* sections */
+.sec{margin-top:22px}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:8px}
+.sec-h h2{font-family:var(--f-display);font-size:24px}
+.link{color:var(--wine);font-size:17px;font-weight:500}
+
+/* quick grid */
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.q{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-size:16px;font-weight:500;text-align:center}
+.q{background:var(--cs,var(--surface));border-color:transparent;color:var(--ink)}
+.q .ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:var(--surface)}
+.q:nth-child(1){--c:var(--k1);--cs:var(--k1s)}.q:nth-child(2){--c:var(--k2);--cs:var(--k2s)}.q:nth-child(3){--c:var(--k3);--cs:var(--k3s)}.q:nth-child(4){--c:var(--k4);--cs:var(--k4s)}
+
+/* promo */
+.promo{display:flex;gap:14px;align-items:center;background:var(--gold-soft);border-radius:16px;padding:14px 16px}
+.promo .burst{flex:none;width:80px;height:80px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;text-align:center;line-height:1;font-family:var(--f-num);font-weight:800;font-size:24px}
+.promo .burst small{display:block;font-size:14px;font-weight:600;letter-spacing:.08em}
+.promo b{display:block}
+
+/* rewards */
+.hscroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory;margin-inline:-4px;padding-inline:4px}
+.hscroll .rw{flex:0 0 170px;scroll-snap-align:start}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.rw{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;text-align:left;min-width:0}
+.ph{aspect-ratio:1/1;max-width:100%;width:100%;display:grid;place-items:center;position:relative;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+/* category colour */
+.rw{background:var(--cs);border-color:transparent}
+.rw .pill.soft{background:var(--surface);color:var(--c)}
+.rw .pill:not(.soft){background:var(--c)}
+.ph .tag{color:var(--surface)!important;background:var(--c)!important}
+.ph .tag{position:absolute;left:8px;top:8px;font-size:14px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--surface);color:var(--muted)}
+.rw .body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:2px;flex:1}
+.rw .nm{font-weight:700;font-size:18px;line-height:1.3}
+.rw .en{color:var(--muted);font-size:16px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cost{margin-top:auto;padding-top:8px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:4px;background:var(--wine);color:var(--on-wine);border-radius:99px;padding:3px 10px;font-family:var(--f-num);font-weight:700;font-size:16px}
+.pill.soft{background:var(--wine-soft);color:var(--wine)}
+.stock{font-size:15px;color:var(--muted)}
+.out{opacity:.55}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.chip{flex:none;padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);font-size:17px;white-space:nowrap}
+.chip[style]{background:var(--cs);color:var(--c);border-color:transparent;font-weight:700}
+.chip.on{background:var(--wine);color:var(--on-wine);border-color:var(--wine)}
+.chip[style].on{background:var(--c);color:var(--surface)}
+
+/* tasks */
+.list{display:flex;flex-direction:column;gap:8px}
+.task{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.task{--c:var(--k1);--cs:var(--k1s);background:var(--cs);border-color:transparent}
+.task .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--c);color:var(--surface);display:grid;place-items:center}
+.task .plus{color:var(--c)}
+.task[data-k='2']{--c:var(--k2);--cs:var(--k2s)}.task[data-k='3']{--c:var(--k3);--cs:var(--k3s)}.task[data-k='4']{--c:var(--k4);--cs:var(--k4s)}.task[data-k='5']{--c:var(--k5);--cs:var(--k5s)}.task[data-k='6']{--c:var(--k6);--cs:var(--k6s)}
+.task .btn.ghost{background:var(--surface);color:var(--c)}
+.task .tx{flex:1;min-width:0}
+.task .tx b{display:block;font-size:20px}
+.task .tx span{color:var(--muted);font-size:16px}
+.flag{font-size:14px;font-weight:700;color:var(--warn);background:var(--warn-soft);padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:2px}
+.plus{font-family:var(--f-num);font-weight:800;color:var(--gold);white-space:nowrap}
+
+/* buttons, forms */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:12px;background:var(--wine);color:var(--on-wine);font-weight:700;font-size:20px}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.sm{padding:6px 12px;font-size:16px;border-radius:10px}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.danger{background:var(--warn-soft);color:var(--warn)}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.field label{font-size:16px;color:var(--muted);font-weight:500}
+.inp{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);min-width:0}
+textarea.inp{min-height:70px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.uploader{display:flex;gap:12px;align-items:center}
+.uploader .ph{width:84px;height:84px;flex:none;border-radius:14px;border:1px dashed var(--line)}
+.uploader.wide .ph{width:140px;aspect-ratio:16/9;height:auto}
+
+/* tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabs-in{max-width:480px;margin:0 auto;display:flex}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 8px;font-size:15px;color:var(--muted)}
+.tab.on{color:var(--wine);font-weight:700}
+.tab.scan{position:relative;color:var(--wine);font-weight:700}
+.tab.scan .bub{width:58px;height:58px;margin-top:-26px;border-radius:50%;background:var(--wine);color:var(--on-wine);display:grid;place-items:center;box-shadow:0 6px 16px rgba(86,18,38,.35);border:4px solid var(--surface)}
+.scanbig{display:flex;align-items:center;gap:14px;width:100%;padding:16px 18px;border-radius:18px;background:var(--wine);color:var(--on-wine);text-align:left}
+.scanbig .bub{flex:none;width:56px;height:56px;border-radius:14px;background:rgba(255,255,255,.16);display:grid;place-items:center}
+.scanbig b{display:block;font-size:24px}
+.scanbig span{opacity:.85;font-size:16px}
+.cam{position:relative;width:100%;aspect-ratio:1;max-width:100%;border-radius:18px;overflow:hidden;background:#000}
+.cam video{width:100%;height:100%;object-fit:cover;display:block}
+.cam .frame{position:absolute;inset:16%;border:3px solid rgba(255,255,255,.9);border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(20,6,10,.45);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:480px;max-height:88vh;overflow-y:auto;background:var(--surface);border-radius:22px 22px 0 0;padding:18px max(18px,env(safe-area-inset-left,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-right,0px))}
+.sheet h3{font-family:var(--f-display);font-size:25px;margin-bottom:12px}
+.grab{width:40px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 12px}
+.actions{display:flex;gap:10px;margin-top:6px}
+.actions .btn{flex:1}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;z-index:60;font-size:17px;max-width:calc(100% - 32px)}
+
+/* admin */
+.seg{display:flex;background:var(--surface-2);border-radius:12px;padding:4px;gap:4px;margin-bottom:14px}
+.seg button{flex:1;padding:8px 0;border-radius:9px;font-size:17px;color:var(--muted)}
+.seg{overflow-x:auto}.seg button{flex:none;padding-inline:12px;white-space:nowrap}
+.how{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;font-weight:700;font-size:15px}
+.h-self{background:var(--ok-soft);color:var(--ok)}.h-staff{background:var(--warn-soft);color:var(--warn)}
+.terms{background:var(--surface-2);border-radius:14px;padding:12px 14px;font-size:15px;color:var(--muted)}
+.terms b{color:var(--ink)}
+.terms ol{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.tiers .trow{display:grid;grid-template-columns:1fr auto;grid-template-areas:'t p' 'c c';gap:6px 10px;align-items:center;padding:10px 12px;border-radius:12px;border:1px solid var(--line)}
+.tiers .trow .tier{grid-area:t;justify-self:start}.tiers .trow .tp{grid-area:p}.tiers .trow .cond{grid-area:c}
+.tiers .trow+.trow{margin-top:4px}
+.tiers .trow.me{background:var(--gold-soft);outline:2px solid var(--gold)}
+.tiers .cond{font-size:15px;line-height:1.35}
+.tiers .tp{font-weight:800;color:var(--wine);white-space:nowrap}.tiers .tp small{font-size:12px;color:var(--muted);font-weight:500}
+.myprog{margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:16px}
+.myprog .step{padding:10px 12px;border-radius:12px;background:var(--gold-soft);color:var(--ink);line-height:1.5}
+.myprog .step.Platinum{background:var(--wine-soft)}
+.langbtn{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:99px;border:1px solid var(--line);background:var(--surface);font-size:15px;font-weight:700;color:var(--wine)}
+.bellbtn{position:relative;display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--wine)}
+.bellbtn .dot{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:var(--warn);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;font-family:var(--f-num)}
+.pushcard{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--gold-soft);color:var(--ink)}
+.pushcard>svg{flex:none;color:var(--gold)}.pushcard.on{background:var(--ok-soft)}.pushcard.on>svg{color:var(--ok)}
+.newnote{display:flex;gap:12px;align-items:center;width:100%;padding:12px 14px;border-radius:14px;background:var(--wine-soft);color:var(--wine)}
+.newnote b{color:var(--ink)}
+.noticelist{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.notice{display:flex;gap:12px;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--surface)}
+.notice.new{border-color:var(--gold);background:var(--gold-soft)}
+.notice .ic{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--wine-soft);color:var(--wine)}
+.notice .nb{margin:2px 0 4px;white-space:pre-wrap}
+.stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-tiles>div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column}
+.bars{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:2px;height:150px;align-items:end}
+.bar-col{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.bar-col i{display:block;width:100%;min-height:2px;background:var(--wine);border-radius:4px 4px 0 0}
+.bar-v{font-size:11px;color:var(--muted);font-family:var(--f-num)}
+.bars.many .bar-v{display:none}
+.bar-x{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;margin-top:6px}
+.seg button.on{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.arow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.arow.mem{flex-wrap:wrap}.arow.mem .tx{flex-basis:100%}.arow.mem .tx b{white-space:normal}.arow.mem .btnrow{width:100%;justify-content:flex-start}
+.arow .ph{width:52px;height:52px;flex:none;border-radius:10px}
+.arow .tx{flex:1;min-width:0}
+.arow .tx b{display:block;font-size:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.arow .tx span{color:var(--muted);font-size:16px}
+.badge{font-size:15px;font-weight:700;padding:2px 8px;border-radius:99px}
+.badge.pending{background:var(--gold-soft);color:var(--gold)}
+.badge.approved{background:var(--ok-soft);color:var(--ok)}
+.badge.rejected{background:var(--warn-soft);color:var(--warn)}
+.empty{text-align:center;color:var(--muted);padding:28px 12px;border:1px dashed var(--line);border-radius:16px;font-size:17px}
+.hist{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.hist:last-child{border-bottom:0}
+.d-plus{color:var(--ok);font-weight:700}.d-minus{color:var(--warn);font-weight:700}
+.load{display:grid;place-items:center;height:60vh;color:var(--muted);gap:10px;text-align:center}
+.spin{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--wine);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+/* NCP card */
+.ncp{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ncp+.ncp{margin-top:10px}
+.ncp-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ncp-h b{font-family:var(--f-display);font-size:22px}
+.ncp-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ncp-stats>div{background:var(--surface-2);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}
+.big{font-size:38px;font-weight:800;line-height:1.1;color:var(--wine)}
+.stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(26px,1fr));gap:6px}
+.stamps i{aspect-ratio:1;max-width:100%;border-radius:50%;border:1.5px dashed var(--line);display:grid;place-items:center;font-style:normal;font-size:14px;color:var(--muted);font-family:var(--f-num)}
+.stamps i.on{background:var(--wine);border:0;color:var(--on-wine)}
+.ncp.done .stamps i.on{background:var(--gold)}
+.ncp.expired{opacity:.7}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.qrwrap{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.qrbox{background:#fff;padding:14px;border-radius:16px;line-height:0}
+.qrbox img,.qrbox canvas{width:220px;height:220px;max-width:100%}
+.scan-ok{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:24px 8px}
+.scan-ok .big-ic{width:76px;height:76px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center}
+.scan-bad .big-ic{background:var(--warn-soft);color:var(--warn)}
+#printArea{font-family:var(--f-body);color:#000;background:#fff;font-size:12px;line-height:1.4}
+#printArea .mb>b{display:block;font-size:13px;margin-bottom:4px}
+#printArea h1{font-size:22px;margin:0 0 4px}#printArea .meta{font-size:12px;color:#555;margin-bottom:12px}
+#printArea table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px}
+#printArea th,#printArea td{border:1px solid #bbb;padding:4px 6px;text-align:left;vertical-align:top}
+#printArea th{background:#f3e6ea}
+#printArea h2{font-size:15px;margin:16px 0 6px}
+#printArea .mb{break-inside:avoid;margin-bottom:10px}
+@media print{@page{size:A4;margin:12mm} body>*:not(#printArea){display:none!important} #printArea{display:block!important} :root{padding:0}}
+@media (max-width:420px){.quick{grid-template-columns:repeat(2,1fr)}.q{flex-direction:row;justify-content:flex-start;padding:12px;text-align:left}}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<div class="app" id="app"><div class="load"><div class="spin"></div><div>正在载入会员数据…</div></div></div>
+<nav class="tabs" id="tabs" hidden></nav>
+<div id="layer"></div>
+<div id="printArea" hidden></div>
+
+<script>
+/* ---------- icons ---------- */
+const I = {
+  home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  gift:'<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1s6 1 6 1c0 0 6 2 6-1s-4-3-6 1"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+  cog:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/>',
+  cart:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h12L22 7H6"/>',
+  star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  camera:'<path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/>',
+  people:'<circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20c1-3.5 3.5-5 7-5s6 1.5 7 5M15 15c3 0 5.5 1 6.5 4"/>',
+  chat:'<path d="M4 5h16v11H9l-5 4z"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  help:'<circle cx="12" cy="8" r="4"/><path d="M5 21c1-4 3.5-6 7-6s6 2 7 6M18 4l2-1M19 8h2"/>',
+  ba:'<rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/>',
+  plug:'<path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4"/>',
+  leaf:'<path d="M5 19c0-9 6-15 15-15 0 9-6 15-15 15zM5 19l8-8"/>',
+  crown:'<path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/>',
+  ticket:'<path d="M3 8a2 2 0 0 0 0 4v0a2 2 0 0 1 0 4v2h18v-2a2 2 0 0 1 0-4 2 2 0 0 0 0-4V6H3z"/><path d="M14 6v12" stroke-dasharray="2 2"/>',
+  history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  upload:'<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
+  check:'<path d="M5 12l5 5 9-10"/>',
+  bell:'<path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h3M21 17v4h-4M17 17h.01"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1 1-1.5 2.5-1.5s2.5.6 2.5 1.6c0 2.4-5 1.4-5 3.9 0 1 1 1.5 2.5 1.5s2.5-.5 2.5-1.5"/>'
+};
+const ic=(n,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||I.star}</svg>`;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n||0).toLocaleString('en-US');
+
+const CATS=[
+  {id:'lifestyle',zh:'生活用品',en:'Lifestyle',icon:'gift'},
+  {id:'appliances',zh:'家用电器',en:'Home Appliances',icon:'plug'},
+  {id:'wellness',zh:'健康好礼',en:"Wellness Gift",icon:'leaf'},
+  {id:'premium',zh:'豪华奖励',en:'Premium',icon:'crown'},
+  {id:'voucher',zh:'弹性兑换',en:'Vouchers',icon:'ticket'}
+];
+const CATK={lifestyle:'k1',appliances:'k2',wellness:'k3',premium:'k5',voucher:'k4'};
+const catOf=id=>CATS.find(c=>c.id===id)||CATS[0];
+const TIERS={Silver:{zh:'银卡',next:'Gold'},Gold:{zh:'金卡',next:'Platinum'},Platinum:{zh:'白金卡',next:null}};
+const TASK_ICONS=['cart','help','star','camera','chat','ba','people','cal','bolt','gift'];
+
+/* ---------- store (Cloudflare API) ---------- */
+const S={rewards:[],tasks:[],members:[],requests:[],ledger:[],cards:[],checkins:[],settings:{}};
+let live=true, isAdmin=false, loaded=false;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}};
+let token=ls.get('vw_token'), adminToken=ls.get('vw_admin');
+async function api(path,body){
+  const h={'content-type':'application/json'}; if(token) h['x-token']=token; if(adminToken) h['x-admin']=adminToken;
+  let r; try{ r=await fetch('/api/'+path,{method:body?'POST':'GET',headers:h,body:body?JSON.stringify(body):undefined}); }catch(e){ throw new Error('网络不稳定，请再试一次'); }
+  const j=await r.json().catch(()=>({error:'系统暂时没有回应，请稍后再试'}));
+  if(!r.ok||j.error){ const e=new Error(j.error||'请稍后再试'); e.code=j.code; throw e; }
+  return j;
+}
+async function refresh(){
+  const j=await api('data');
+  Object.assign(S,{members:[],requests:[],ledger:[],cards:[],checkins:[]},j.data);
+  S.members.forEach(m=>{ m.tier=tierInfo(m).tier; });
+  isAdmin=!!j.admin; if(!isAdmin&&adminToken){ adminToken=null; ls.set('vw_admin',null); }
+  if(token&&!j.me){ token=null; ls.set('vw_token',null); }
+  myPhone=j.me||null;
+  S.feed=j.admin?(j.data.myNotices||(j.me?[]:j.data.notices||[])):(j.data.notices||[]);
+  S.bcasts=j.admin?(j.data.notices||[]):[]; S.push=j.data.push||null;
+  loaded=true; render(); syncPush();
+}
+async function put(col,id,data){ id=id||uid(); await api('admin/put',{col,id,data}); return id; }
+async function patch(col,id,data){ await api('admin/patch',{col,id,data}); }
+async function del(col,id){ await api('admin/del',{col,id}); }
+async function putSettings(data){ await api('admin/settings',{data}); }
+
+const DEFAULT_TERMS=`积分只能用来兑换礼物，不能兑换现金。 Points cannot be exchanged for cash.
+如果礼物缺货或停产，我们会以同等价值的产品代替。 If a gift is out of stock, it will be replaced with a product of equal value.
+产品款式可能调整，图片仅供参考，以实际交付为准。 Product designs may change; images are for reference only.
+一切最终决定权归店长所有。 The store manager reserves the right of final decision.`;
+const TERMS_I18N={en:`Points can only be used to redeem gifts and cannot be exchanged for cash.
+If a gift is out of stock, it will be replaced with a product of equal value.
+Product designs may change; images are for reference only.
+The store manager reserves the right of final decision.`,ms:`Mata ganjaran hanya boleh ditebus untuk hadiah dan tidak boleh ditukar kepada wang tunai.
+Jika hadiah kehabisan stok, ia akan diganti dengan produk yang sama nilai.
+Reka bentuk produk mungkin berubah; gambar hanya untuk rujukan.
+Keputusan muktamad adalah hak pengurus kedai.`};
+const termsText=()=>{ const own=S.settings&&S.settings.terms; if(own) return own.trim(); return (LANG!=='zh'&&TERMS_I18N[LANG])||DEFAULT_TERMS.trim(); };
+const termsHtml=()=>`<ol translate="${S.settings&&S.settings.terms?'yes':'no'}">${termsText().split(/\n+/).filter(Boolean).map(l=>`<li>${esc(l)}</li>`).join('')}</ol>`;
+const BRAND=__BRAND__;
+/* ---------- languages ---------- */
+const I18N=__I18N__;
+const LANGS=[['zh','中文'],['en','English'],['ms','Bahasa Melayu']];
+let LANG=(()=>{try{return localStorage.getItem('vw_lang')||'zh'}catch(e){return 'zh'}})();
+const L=()=>LANG;
+const CJK=/[\u3400-\u9fff\uff01-\uff5e\u3000-\u303f]/;
+const NUMRE=/10\+1|\d{4}-\d{2}-\d{2}|\d{1,2}:\d{2}|\d[\d,]*(?:\.\d+)?/g;
+window._miss=new Set();
+let FRAGS=null;
+function frags(){ if(FRAGS) return FRAGS; const i=LANG==='en'?0:1; FRAGS=Object.keys(I18N).filter(k=>k.length>=2&&!k.includes('{')).sort((a,b)=>b.length-a.length).map(k=>[k,I18N[k][i]]); return FRAGS; }
+function trText(str){
+  if(LANG==='zh'||!str||!CJK.test(str)) return str;
+  const lead=str.match(/^\s*/)[0], tail=str.match(/\s*$/)[0], core=str.trim(), nums=[];
+  const key=core.replace(NUMRE,m=>{ if(m==='10+1') return m; nums.push(m);return '{'+(nums.length-1)+'}';});
+  const hit=I18N[key]; let out;
+  if(hit) out=hit[LANG==='en'?0:1];
+  else { window._miss.add(key); out=key; for(const [k,v] of frags()){ if(out.includes(k)) out=out.split(k).join(v); if(!CJK.test(out)) break; } }
+  out=out.replace(/\{(\d+)\}/g,(_,i)=>nums[+i]??'');
+  return (/^[,.;:)!?]/.test(out)?'':lead)+out+tail;
+}
+const SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1};
+function trNode(root){
+  if(LANG==='zh'||!root) return;
+  if(root.nodeType===3){ const p=root.parentElement; if(p&&!SKIP[p.tagName]&&!p.closest('[translate="no"]')){ const v=trText(root.nodeValue); if(v!==root.nodeValue) root.nodeValue=v; } return; }
+  if(root.nodeType!==1||SKIP[root.tagName]||root.closest('[translate="no"]')) return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,{acceptNode:n=>n.nodeType===1?((SKIP[n.tagName]||n.getAttribute('translate')==='no')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_SKIP):NodeFilter.FILTER_ACCEPT});
+  const list=[]; let n; while((n=w.nextNode())) list.push(n);
+  list.forEach(t=>{ const v=trText(t.nodeValue); if(v!==t.nodeValue) t.nodeValue=v; });
+  [root,...root.querySelectorAll('[placeholder],[title],[aria-label]')].forEach(el=>{ if(el.closest('[translate="no"]')) return; ['placeholder','title','aria-label'].forEach(a=>{ const v=el.getAttribute&&el.getAttribute(a); if(v&&CJK.test(v)) el.setAttribute(a,trText(v)); }); });
+}
+const trObs=new MutationObserver(ms=>{ if(LANG==='zh') return; trObs.disconnect(); ms.forEach(m=>{ if(m.type==='characterData') trNode(m.target); else m.addedNodes.forEach(trNode); }); trWatch(); });
+function trWatch(){ trObs.observe(document.body,{childList:true,subtree:true,characterData:true}); }
+function setLang(l){ LANG=l; FRAGS=null; try{localStorage.setItem('vw_lang',l)}catch(e){} document.documentElement.lang=l==='zh'?'zh':l; closeSheet(); render(); pushLinked=null; syncPush(); }
+/* ---------- notifications ---------- */
+const seenKey=()=>'vw_seen_'+(myPhone||'guest');
+const seenTs=()=>+(ls.get(seenKey())||0);
+const unreadN=()=>(S.feed||[]).filter(n=>n.ts>seenTs()).length;
+const nTitle=n=>(LANG!=='zh'&&n[LANG]&&n[LANG].title)||n.title||'';
+const nBody=n=>(LANG!=='zh'&&n[LANG]&&n[LANG].body)||n.body||'';
+const nIcon=k=>({redeem:'gift',earn:'star',renew:'ticket',reject:'chat',low:'history',used:'history'})[k]||'bell';
+const fmtTs=ts=>{const d=new Date(ts);return dt(ts)+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
+const isIOS=()=>/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isStandalone=()=>!!(navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches));
+const pushSupported=()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
+let PUSH_ON=false, pushLinked=null;
+function pushState(){
+  if(!pushSupported()) return isIOS()&&!isStandalone()?'ios':'none';
+  if(Notification.permission==='denied') return 'denied';
+  return PUSH_ON&&Notification.permission==='granted'?'on':'off';
+}
+function pushCard(compact){
+  if(!myPhone) return '';
+  const st=pushState();
+  if(st==='none') return '';
+  if(st==='on') return compact?'':`<div class="pushcard on">${ic('bell',22)}<div style="flex:1;min-width:0"><b>手机通知已开启</b><span class="sub" style="display:block">兑换结果、卡快用完、俱乐部公告会直接通知你。</span></div><button class="link sub" data-act="pushOff">关闭</button></div>`;
+  if(st==='denied') return `<div class="pushcard">${ic('bell',22)}<div style="flex:1;min-width:0"><b>通知已被关闭</b><span class="sub" style="display:block">请到手机的「设定 → 通知」，允许这个 App 发通知。</span></div></div>`;
+  if(st==='ios') return `<div class="pushcard">${ic('bell',22)}<div style="flex:1;min-width:0"><b>想在 iPhone 收到通知？</b><span class="sub" style="display:block">先按 Safari 下方的分享按钮 → 「加入主画面」，再从主画面打开 App，就会看到「开启手机通知」的按钮。</span></div></div>`;
+  return `<div class="pushcard">${ic('bell',22)}<div style="flex:1;min-width:0"><b>开启手机通知</b><span class="sub" style="display:block">兑换结果、卡快用完、俱乐部公告会直接通知你。</span></div><button class="btn sm" data-act="pushOn">开启</button></div>`;
+}
+let swReg=null;
+async function getReg(){ if(swReg) return swReg; swReg=await navigator.serviceWorker.register('/sw.js'); return swReg; }
+async function syncPush(){
+  if(!pushSupported()) return;
+  try{
+    const reg=await getReg(); const sub=await reg.pushManager.getSubscription();
+    const on=!!sub&&Notification.permission==='granted';
+    const changed=on!==PUSH_ON; PUSH_ON=on;
+    const link=on&&myPhone?myPhone+'|'+LANG+'|'+sub.endpoint:null;
+    if(link&&link!==pushLinked){ pushLinked=link; await api('push/subscribe',{...sub.toJSON(),lang:LANG}).catch(()=>{pushLinked=null;}); }
+    if(changed) render();
+  }catch(e){}
+}
+async function enablePush(btn){
+  if(!myPhone) return toast('请先登入');
+  if(btn) btn.disabled=true;
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted'){ toast('没有开启通知。你之后可以在手机设定里允许。'); render(); return; }
+    const reg=await getReg(); await navigator.serviceWorker.ready;
+    const k=await api('push/key'); if(!k.key) throw new Error('通知还没准备好');
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub) sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:unb64u(k.key)});
+    await api('push/subscribe',{...sub.toJSON(),lang:LANG}); pushLinked=myPhone+'|'+LANG+'|'+sub.endpoint;
+    PUSH_ON=true; toast('手机通知已开启'); render(); if(document.querySelector('.sheet .noticelist')) openNotices();
+  }catch(e){ toast('开启通知失败：'+(e.message||'请稍后再试')); if(btn) btn.disabled=false; }
+}
+async function disablePush(){
+  try{ const reg=await getReg(); const sub=await reg.pushManager.getSubscription(); if(sub){ await api('push/unsubscribe',{endpoint:sub.endpoint}).catch(()=>{}); await sub.unsubscribe(); } }catch(e){}
+  PUSH_ON=false; pushLinked=null; toast('手机通知已关闭'); render();
+}
+async function unlinkPush(){ try{ if(!pushSupported()) return; const reg=await getReg(); const sub=await reg.pushManager.getSubscription(); if(sub) await api('push/unsubscribe',{endpoint:sub.endpoint}); }catch(e){} pushLinked=null; }
+function unb64u(s){ s=String(s).replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const b=atob(s); const u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; }
+function openNotices(){
+  const list=S.feed||[], seen=seenTs();
+  openSheet(`<h3>通知</h3>${pushCard(true)}<div class="noticelist">${list.length?list.map(n=>`<div class="notice ${n.ts>seen?'new':''}"><span class="ic">${ic(n.kind==='broadcast'?'bell':nIcon(n.kind),20)}</span><div style="flex:1;min-width:0"><b>${nt(nTitle(n))}</b>${nBody(n)?`<div class="nb">${nt(nBody(n))}</div>`:''}<span class="sub">${fmtTs(n.ts)}</span></div></div>`).join(''):'<div class="empty">还没有通知。</div>'}</div>`);
+  if(list.length) ls.set(seenKey(),String(Math.max(...list.map(n=>n.ts))));
+  render();
+}
+const nt=x=>`<span translate="no">${esc(x)}</span>`;
+const nameOf=x=>LANG==='zh'?x.name:(x.en||x.name);
+const subOf=x=>LANG==='zh'?(x.en||''):(x.en?x.name:'');
+const heroOf=(st,f)=>(LANG!=='zh'&&st[f+'_'+LANG])||st[f]||'';
+const brand=()=>{const st=S.settings||{}; return {name:st.brandName||BRAND.name, sub:st.brandSub||BRAND.sub, short:st.brandShort||BRAND.short};};
+const fileTag=()=>(brand().short||'Club').replace(/[\\/:*?"<>|\s]+/g,'');
+const imgSrc=o=>o&&o.photo?('/img/'+o.photo):null;
+async function shrink(file,max=900){
+  const url=URL.createObjectURL(file);
+  try{ const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('读不到这张照片'));i.src=url;});
+    const k=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+    const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height); return c.toDataURL('image/jpeg',.82);
+  } finally { URL.revokeObjectURL(url); }
+}
+async function squarePng(file,size){
+  const url=URL.createObjectURL(file);
+  try{ const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('读不到这张图片'));i.src=url;});
+    const c=document.createElement('canvas'); c.width=c.height=size; const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,size,size);
+    const k=Math.max(size/img.width,size/img.height), w=img.width*k, h=img.height*k; x.drawImage(img,(size-w)/2,(size-h)/2,w,h); return c.toDataURL('image/png');
+  } finally { URL.revokeObjectURL(url); }
+}
+async function uploadPhoto(file){ const data=await shrink(file); const r=await api('admin/photo',{data}); return {photo:r.id,photoUrl:null}; }
+
+/* ---------- local prefs ---------- */
+let statRange=7, statFrom=null, statTo=null, cardFilter='all';
+let view='home', cat='all', adminTab='requests', memberQ='';
+let myPhone=null, loginPhone='', loginStep='phone', loginName='';
+
+/* ---------- helpers ---------- */
+const me=()=>S.members.find(m=>m.phone===myPhone)||null;
+const pendingRedeem=p=>S.requests.filter(r=>r.phone===p&&r.type==='redeem'&&r.status==='pending').reduce((a,r)=>a+(+r.points||0),0);
+const DAILY_PTS={Silver:10,Gold:20,Platinum:30};
+const ckPts=phone=>{const m=S.members.find(x=>x.phone===phone); return DAILY_PTS[m&&m.tier]||10;};
+const totalPts=m=>m?(+m.points||0)+S.checkins.filter(x=>x.phone===m.phone).reduce((a,x)=>a+(+x.points||0),0):0;
+const avail=m=>m?totalPts(m)-pendingRedeem(m.phone):0;
+const activeRewards=()=>S.rewards.filter(r=>r.active!==false).sort((a,b)=>(a.points-b.points));
+const activeTasks=()=>S.tasks.filter(t=>t.active!==false).sort((a,b)=>(a.order??0)-(b.order??0));
+const dt=ts=>{const d=new Date(ts);return isNaN(d)?'':`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+
+const DAY=864e5;
+const ART_URL=location.origin+'/';
+function h36(str){let h=2166136261>>>0;for(const ch of str){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)>>>0;}return h.toString(36);}
+const qrMode=()=>(S.settings&&S.settings.qrMode)||'fixed';
+function qrCodeFor(date){const st=S.settings||{}; if(!st.qrKey||qrMode()==='off') return null; return h36(st.qrKey+'|'+(qrMode()==='fixed'?'fixed':date));}
+const qrLink=()=>{const c=qrCodeFor(today());return c?ART_URL+'#checkin-'+c:null;};
+let scanCode=null, scanResult=null, scanBad=false;
+const parseD=x=>{const [y,m,d]=String(x||'').split('-').map(Number);return new Date(y,(m||1)-1,d||1).getTime()};
+const today=()=>dt(Date.now());
+const CARD_TYPES=[{n:'10+1 Program',total:11,kind:'10+1'},{n:'30 天 Program',total:30,kind:'30'},{n:'Daily Pass',total:1,kind:'daily'}];
+/* 等级规则：10+1 卡算 1 张，30 天卡算 3 张（9 张 10+1 = 3 张 30 天）。App 里开过的卡（不论有没有付款）+ 以前买过的卡一起算。
+   超过 9 → Gold，超过 18 → Platinum，其余（新卡、Daily Pass）→ Silver。 */
+const TIER_RULE={gold:9,platinum:18};
+const kindOf=c=>c.kind||(/daily/i.test(c.name||'')?'daily':/30/.test(c.name||'')?'30':/10\s*\+\s*1/.test(c.name||'')?'10+1':'other');
+function tierInfo(m){
+  const cs=S.cards.filter(c=>c.phone===m.phone);
+  const n10=(+m.prior10||0)+cs.filter(c=>kindOf(c)==='10+1').length, n30=(+m.prior30||0)+cs.filter(c=>kindOf(c)==='30').length;
+  const score=n10+3*n30;
+  const auto=score>TIER_RULE.platinum?'Platinum':score>TIER_RULE.gold?'Gold':'Silver';
+  const tier=m.tierOverride&&TIERS[m.tierOverride]?m.tierOverride:auto;
+  const nextAt=auto==='Silver'?TIER_RULE.gold+1:auto==='Gold'?TIER_RULE.platinum+1:null;
+  return {tier,auto,manual:!!m.tierOverride,n10,n30,score,next:auto==='Silver'?'Gold':auto==='Gold'?'Platinum':null,need:nextAt?nextAt-score:0};
+}
+const TIER_STEPS=[{tier:'Gold',n10:TIER_RULE.gold+1,n30:Math.floor(TIER_RULE.gold/3)+1},{tier:'Platinum',n10:TIER_RULE.platinum+1,n30:Math.floor(TIER_RULE.platinum/3)+1}];
+function nextSteps(m){ const t=tierInfo(m); if(t.manual) return []; const rank={Silver:0,Gold:1,Platinum:2}; return TIER_STEPS.filter(x=>rank[x.tier]>rank[t.auto]).map(x=>({...x,left10:Math.max(0,x.n10-t.n10),left30:Math.max(0,x.n30-t.n30)})); }
+function stepText(x){ return `10+1 卡续到<b>第 ${x.n10} 张</b>${x.left10?`（还差 ${x.left10} 张）`:''}，或 30 天卡续到<b>第 ${x.n30} 张</b>${x.left30?`（还差 ${x.left30} 张）`:''}，就能升级 <b>${x.tier}</b>`; }
+function tierProgress(m){ const n=nextSteps(m)[0]; return n?stepText(n):''; }
+const RECENT=3*60e3;
+function cardInfo(c){
+  const ins=S.checkins.filter(x=>x.cardId===c.id).sort((a,b)=>a.ts-b.ts);
+  const used=ins.length, left=Math.max(0,(+c.total||0)-used);
+  const hasExp=(+c.days||0)>0, st=parseD(c.start), endT=hasExp?st+((+c.days)-1)*DAY:Infinity, t=parseD(today());
+  const notStarted=t<st, daysLeft=hasExp?(t>endT?0:Math.round((endT-Math.max(t,st))/DAY)+1):null;
+  const todayN=ins.filter(x=>x.date===today()).length;
+  const last=ins[ins.length-1]; const recent=!!last&&Date.now()-last.ts<RECENT;
+  const status=left===0?'done':t>endT?'expired':'active';
+  return {ins,used,left,end:hasExp?dt(endT):null,daysLeft,todayN,recent,status,notStarted};
+}
+const cardsOf=p=>S.cards.filter(c=>c.phone===p).sort((a,b)=>(b.ts||0)-(a.ts||0));
+const cardTs=c=>c.ts||parseD(c.start);
+const payTag=c=>c.paid?`<span class="badge approved">已付款 ${esc(c.paidAt||'')}${c.paidAmount?' · RM'+esc(c.paidAmount):''}</span>`:`<span class="badge rejected">未付款</span>`;
+const unpaidOf=p=>S.cards.filter(c=>c.phone===p&&!c.paid).length;
+const cardNo=c=>S.cards.filter(x=>x.phone===c.phone).sort((a,b)=>cardTs(a)-cardTs(b)).findIndex(x=>x.id===c.id)+1;
+function memberStats(m){
+  const cs=S.cards.filter(c=>c.phone===m.phone).sort((a,b)=>cardTs(a)-cardTs(b));
+  const ins=S.checkins.filter(x=>x.phone===m.phone).sort((a,b)=>a.ts-b.ts);
+  const cur=cs.slice().reverse().find(c=>cardInfo(c).status==='active')||cs[cs.length-1]||null;
+  return {cards:cs, nCards:cs.length, nCheckins:ins.length, last:ins.length?dt(ins[ins.length-1].ts):'', cur, curInfo:cur?cardInfo(cur):null, pts:totalPts(m)};
+}
+const hasPendingRenew=p=>S.requests.some(r=>r.phone===p&&r.type==='renew'&&r.status==='pending');
+function renewBtn(phone){ return hasPendingRenew(phone)?`<button class="btn block ghost" disabled>续卡申请审核中，教练确认后即可继续打卡</button>`:`<button class="btn block" data-act="renew">申请续卡</button>`; }
+function cardBlock(c,admin){
+  const k=cardInfo(c); const lab={active:k.notStarted?'未开始':'进行中',done:'已用完',expired:'已过期'}[k.status];
+  const bcls={active:'approved',done:'pending',expired:'rejected'}[k.status];
+  let btn='';
+  if(!admin){
+    if(k.status!=='active') btn=renewBtn(c.phone);
+    else if(k.notStarted) btn=`<button class="btn block" disabled>${esc(c.start)} 开始</button>`;
+    else if(qrMode()!=='off'&&!(view==='scan'&&scanOk())) btn=`<div class="sub" style="text-align:center;padding:6px 0">${ic('camera',16)} 按下方中间的「扫码打卡」，扫柜台的二维码${k.todayN?` · 今天已打 ${k.todayN} 次`:''}</div>`;
+    else btn=`<button class="btn block" data-act="checkin" data-id="${esc(c.id)}">${ic('check',18)} ${k.todayN?'再打一次卡（今天已打 '+k.todayN+' 次）':'打卡'}</button>`;
+  }
+  const second=k.daysLeft!=null?`<div><span class="num big">${k.daysLeft}</span><span class="sub">剩余天数（到期 ${k.end}）</span></div>`:`<div><span class="num big">${k.used}</span><span class="sub">已打卡次数</span></div>`;
+  const payLine=admin?`<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${payTag(c)}${c.paid&&c.payMethod?`<span class="sub">${esc(c.payMethod)}${c.paidNote?' · '+esc(c.paidNote):''}</span>`:''}</div>`:'';
+  return `<div class="ncp ${k.status}">${payLine}<div class="ncp-h"><div><b>NCP 卡 · 第 ${cardNo(c)} 张 · ${esc(c.name)}</b><div class="sub">${esc(c.start)} 开始${k.end?' · 到期 '+k.end:''}</div></div><span class="badge ${bcls}">${lab}</span></div>
+  ${k.status==='active'?`<div class="promo" style="padding:10px 14px"><span class="plus num" style="font-size:22px">+${ckPts(c.phone)}</span><span>每次打卡<b>自动加 ${ckPts(c.phone)} 分</b>（每日消费积分），不用申请</span></div>`:''}
+  <div class="ncp-stats"><div><span class="num big">${k.left}</span><span class="sub">剩余次数（共 ${+c.total||0} 次）</span></div>${second}</div>
+  <div class="stamps" aria-label="已打卡 ${k.used} 次">${Array.from({length:+c.total||0},(_,i)=>`<i class="${i<k.used?'on':''}" title="${i<k.used?esc(k.ins[i].date):''}">${i<k.used?ic('check',12):i+1}</i>`).join('')}</div>${btn}</div>`;
+}
+const ckId=c=>c.id+'_'+today()+'_'+Date.now().toString(36);
+const leftMsg=(c,k)=>`${c.name} 还剩 ${k.left-1} 次${k.daysLeft!=null?'，'+k.daysLeft+' 天':''}。`;
+function ph(o,cls='',extra=''){
+  const src=imgSrc(o); const c=catOf(o&&o.cat);
+  const hue=`var(--${CATK[c.id]}s)`, col=`var(--${CATK[c.id]})`;
+  return `<div class="ph ${cls}" style="background:${hue};color:${col};${extra}">${src?`<img src="${esc(src)}" alt="${esc(o.name||'')}" loading="lazy">`:ic(c.icon,34)}</div>`;
+}
+function rewardCard(r){
+  const m=me(); const out=r.stock!=null&&r.stock<=0; const can=m&&avail(m)>=r.points&&!out;
+  const k=CATK[catOf(r.cat).id];
+  return `<button class="rw ${out?'out':''}" data-act="reward" data-id="${esc(r.id)}" style="--c:var(--${k});--cs:var(--${k}s)">
+    ${ph(r).replace('</div>',`<span class="tag">${esc(catOf(r.cat).zh)}</span></div>`)}
+    <div class="body"><div class="nm">${nt(nameOf(r))}</div><div class="en">${nt(subOf(r))}</div>
+    <div class="cost"><span class="pill ${can?'':'soft'} num">${fmt(r.points)}</span><span class="stock">${out?'已兑完':r.stock!=null?'剩 '+r.stock:''}</span></div></div></button>`;
+}
+
+/* ---------- views ---------- */
+function vHome(){
+  const st=S.settings||{}; const m=me(); const src=imgSrc(st);
+  const near=m?activeRewards().filter(r=>r.points>avail(m))[0]:null;
+  const pct=near?Math.min(100,Math.round(avail(m)/near.points*100)):100;
+  const promo=activeTasks().find(t=>t.promo);
+  return `
+  <section class="hero center ${src?'has-img':''}" ${src?`style="background-image:url('${esc(src)}')"`:''}>
+    <div class="eyebrow">${esc(st.eyebrow||'NC Loyalty Program')}</div>
+    <h1>${(st['title_'+LANG]&&LANG!=='zh'?nt(heroOf(st,'title')):esc(heroOf(st,'title')||'俱乐部积分奖励')).replace(/\n/g,'<br>')}<svg class="giftbox" viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="26" width="48" height="32" rx="4" fill="#E8B35A"/><rect x="5" y="18" width="54" height="12" rx="3" fill="#F3C978"/><rect x="28" y="18" width="8" height="40" fill="#FFF7F2"/><rect x="8" y="34" width="48" height="5" fill="#D9962B" opacity=".35"/><path d="M32 18c-4-10-16-12-16-4 0 5 9 5 16 4zM32 18c4-10 16-12 16-4 0 5-9 5-16 4z" fill="#FFF7F2" stroke="#E8B35A" stroke-width="2"/><circle cx="32" cy="18" r="4" fill="#F3C978"/></svg></h1>
+    <p>${st['sub_'+LANG]&&LANG!=='zh'?nt(heroOf(st,'sub')):esc(st.sub||'')}</p>
+    <svg class="coins" viewBox="0 0 150 150" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="2"><circle cx="90" cy="90" r="56"/><circle cx="90" cy="90" r="40"/><circle cx="34" cy="40" r="16"/></g><text x="90" y="104" text-anchor="middle" font-family="Sora,sans-serif" font-weight="800" font-size="40" fill="currentColor" fill-opacity=".3">P</text></svg>
+  </section>
+  <div class="card mcard">
+  ${m?`<div class="mrow"><div><div class="mname">${nt(m.name)} <span class="tier ${esc(m.tier)}">${esc(m.tier)} · ${TIERS[m.tier]?.zh||''}</span></div>
+      <div class="sub">可用积分 Available points</div>${tierProgress(m)?`<div class="sub" style="color:var(--gold);margin-top:4px">${tierProgress(m)}</div>`:''}</div>
+      <div class="pts num">${fmt(avail(m))}<small>pts</small></div></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="sub" style="margin-top:6px">${near?`再累积 <b class="num">${fmt(near.points-avail(m))}</b> 分即可兑换「${nt(nameOf(near))}」`:'所有礼物都可以兑换了！'}</div>`
+   :`<div class="mrow"><div><div class="mname">欢迎来到 NC 俱乐部</div><div class="sub">用手机号码免费注册，开始累积积分</div></div>
+      <button class="btn sm" data-act="go" data-v="me">登入 / 注册</button></div>`}
+  </div>
+  ${m&&cardsOf(m.phone).length?`<div class="sec">${(cardsOf(m.phone).filter(c=>cardInfo(c).status==='active').length?cardsOf(m.phone).filter(c=>cardInfo(c).status==='active'):cardsOf(m.phone).slice(0,1)).map(c=>cardBlock(c)).join('')}</div>`:''}
+  <div class="sec"><button class="scanbig" data-act="scanQR"><span class="bub">${ic('qr',32)}</span><span style="min-width:0"><b>扫码打卡</b><span>到店后按这里，扫柜台的二维码</span></span></button></div>
+  ${unreadN()?`<div class="sec"><button class="newnote" data-act="notices">${ic('bell',22)}<span style="flex:1;min-width:0;text-align:left"><b>你有 ${unreadN()} 则新通知</b><span style="display:block" class="sub">${nt(nTitle((S.feed||[]).find(n=>n.ts>seenTs())||{}))}</span></span></button></div>`:''}
+  ${['off','ios'].includes(pushState())?`<div class="sec">${pushCard()}</div>`:''}
+  <div class="sec quick">
+    <button class="q" data-act="go" data-v="earn"><span class="ic">${ic('bolt')}</span>赚积分</button>
+    <button class="q" data-act="go" data-v="shop"><span class="ic">${ic('gift')}</span>兑换商城</button>
+    <button class="q" data-act="go" data-v="me"><span class="ic">${ic('user')}</span>会员卡</button>
+    <button class="q" data-act="history"><span class="ic">${ic('history')}</span>积分记录</button>
+  </div>
+  ${promo?`<div class="sec promo"><div class="burst">${fmt(promo.points)}<small>POINTS</small></div><div style="min-width:0"><b>${nt(nameOf(promo))}</b><span class="sub">${nt(subOf(promo))}${promo.note?' · '+esc(promo.note):''}</span></div></div>`:''}
+  <div class="sec"><div class="sec-h"><h2>热门好礼</h2><button class="link" data-act="go" data-v="shop">全部礼物 →</button></div>
+    ${activeRewards().length?`<div class="hscroll">${activeRewards().slice(0,8).map(rewardCard).join('')}</div>`:`<div class="empty">还没有礼物。管理员可以在「管理」里添加。</div>`}</div>
+  <div class="sec"><div class="sec-h"><h2>积分获取攻略</h2><button class="link" data-act="go" data-v="earn">更多 →</button></div>
+    <div class="list">${activeTasks().slice(0,3).map(taskRow).join('')||'<div class="empty">还没有赚分任务。</div>'}</div></div>
+  <div class="sec" style="text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center"><span class="sub">© ${nt(brand().name)} · ${esc(brand().sub)}</span>${isAdmin?'':'<button class="link sub" data-act="adminLogin">店家登入</button>'}</div>`;
+}
+function taskRow(t,i){
+  return `<div class="task" data-k="${((i||0)%6)+1}"><span class="ic">${ic(t.icon||'star',22)}</span><div class="tx"><b>${nt(nameOf(t))}${t.promo?'<span class="flag">限时</span>':''}</b><span>${nt(subOf(t))}${t.note?' · '+esc(t.note):''}</span></div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="plus num">+${t.auto&&me()?fmt(ckPts(myPhone)):fmt(t.points)}</span>${t.auto?'<span class="badge approved" style="white-space:nowrap">自动加分</span>':`<button class="btn sm ghost" data-act="claim" data-id="${esc(t.id)}">申请</button>`}</div></div>`;
+}
+function tierRulesCard(m){
+  const t=m?tierInfo(m):null;
+  const rows=[['Silver','银卡','新卡、Daily Pass',DAILY_PTS.Silver],['Gold','金卡','第 10 张 10+1 卡开始，或第 4 张 30 天卡开始',DAILY_PTS.Gold],['Platinum','白金卡','第 19 张 10+1 卡开始，或第 7 张 30 天卡开始',DAILY_PTS.Platinum]];
+  return `<div class="card tiers"><b style="font-size:20px">会员等级说明</b>
+    <p class="sub" style="margin:4px 0 10px">持续续卡，就能累积升级成为 Gold 或 Platinum，每次扫码打卡可以获得更多积分。</p>
+    ${rows.map(([k,zh,cond,pts])=>`<div class="trow ${t&&t.tier===k?'me':''}"><span class="tier ${k}">${k} · ${zh}</span><span class="cond">${cond}</span><span class="tp num">+${pts}<small>/次</small></span></div>`).join('')}
+    ${t?`<div class="myprog"><div>你目前是 <b>${t.tier}</b>，已经累计 10+1 卡 <b>${t.n10}</b> 张、30 天卡 <b>${t.n30}</b> 张。</div>${nextSteps(m).map(x=>`<div class="step ${x.tier}">${stepText(x)}</div>`).join('')}${!t.manual&&t.auto==='Platinum'?'<div class="step Platinum">你已经是最高等级 Platinum，谢谢你一直以来的支持！</div>':''}</div>`:''}
+  </div>`;
+}
+function vEarn(){
+  return `<div class="sec-h"><h2 style="font-family:var(--f-display);font-size:30px">赚积分</h2></div>
+  <p class="sub" style="margin:-4px 0 14px">完成以下任务后按「申请」，教练审核后积分会自动加入你的账户。</p>
+  <div class="list">${activeTasks().map(taskRow).join('')||'<div class="empty">还没有赚分任务。</div>'}</div>
+  <div class="sec">${tierRulesCard(me())}</div>`;
+}
+function vShop(){
+  const m=me(); const list=activeRewards().filter(r=>cat==='all'||r.cat===cat);
+  return `<div class="sec-h"><h2 style="font-family:var(--f-display);font-size:30px">兑换商城</h2>${m?`<span class="pill num">${fmt(avail(m))} pts</span>`:''}</div>
+  <div class="chips"><button class="chip ${cat==='all'?'on':''}" data-act="cat" data-v="all">全部</button> ${CATS.map(c=>`<button class="chip ${cat===c.id?'on':''}" style="--c:var(--${CATK[c.id]});--cs:var(--${CATK[c.id]}s)" data-act="cat" data-v="${c.id}">${c.zh}</button>`).join('')}</div>
+  ${list.length?`<div class="grid">${list.map(rewardCard).join('')}</div>`:'<div class="empty">这个分类暂时没有礼物。</div>'}
+  <div class="terms sec"><b>兑换须知 Terms</b>${termsHtml()}</div>`;
+}
+function loginView(){
+  const pinField=(id,label)=>`<div class="field"><label for="${id}">${label}</label><input class="inp num pin" id="${id}" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••"></div>`;
+  let body;
+  if(loginStep==='pin') body=`<form id="pinForm"><p style="margin:0 0 12px">${esc(loginName)}，欢迎回来</p>${pinField('pin1','输入你的 4 位数密码')}
+      <button class="btn block" type="submit">登入</button></form>
+      <p class="sub" style="margin-top:12px">忘记密码？请联系教练帮你重设。</p>
+      <button class="link" data-act="loginBack" style="margin-top:6px">换一个号码</button>`;
+  else if(loginStep==='register') body=`<form id="regForm"><p style="margin:0 0 12px">欢迎加入 ${nt(brand().name)}！这个号码（${esc(loginPhone)}）还没注册，填写以下资料就可以开始累积积分。</p>
+      <div class="field"><label for="rname">你的名字</label><input class="inp" id="rname" autocomplete="name" placeholder="例如 李美玲"></div>
+      ${pinField('pin1','设定 4 位数密码')}${pinField('pin2','再输入一次')}
+      <button class="btn block" type="submit">注册并登入</button></form>
+      <button class="link" data-act="loginBack" style="margin-top:12px">换一个号码</button>`;
+  else if(loginStep==='setpin') body=`<form id="setPinForm"><p style="margin:0 0 12px">${esc(loginName)}，第一次登入请设定你自己的 4 位数密码。</p>
+      ${pinField('pin1','设定 4 位数密码')}${pinField('pin2','再输入一次')}
+      <button class="btn block" type="submit">设定密码并登入</button></form>
+      <button class="link" data-act="loginBack" style="margin-top:12px">换一个号码</button>`;
+  else body=`<form id="loginForm"><div class="field"><label for="ph">手机号码 Phone number</label><input class="inp" id="ph" inputmode="tel" autocomplete="tel" placeholder="例如 0123456789" value="${esc(loginPhone)}"></div>
+      <button class="btn block" type="submit">下一步</button></form>
+      <p class="sub" style="margin-top:12px">第一次使用？输入手机号码按「下一步」就可以注册。</p>`;
+  return `<div class="sec-h"><h2 style="font-family:var(--f-display);font-size:30px">${loginStep==='register'?'会员注册':'会员登入 / 注册'}</h2></div><div class="card">${body}</div>`;
+}
+function vMe(){
+  const m=me();
+  if(!m) return loginView();
+  const reqs=S.requests.filter(r=>r.phone===m.phone).sort((a,b)=>b.ts-a.ts);
+  const led=S.ledger.filter(l=>l.phone===m.phone).concat(S.checkins.filter(x=>x.phone===m.phone&&+x.points).map(x=>({delta:+x.points,reason:'每日消费 Daily Order（打卡）',ts:x.ts}))).sort((a,b)=>b.ts-a.ts);
+  return `<div class="hero" style="min-height:0"><div class="eyebrow">NC Member · ${esc(m.phone)}</div><h1 style="margin-bottom:2px">${nt(m.name)}</h1>
+     <span class="tier ${esc(m.tier)}" style="background:rgba(255,255,255,.18);color:var(--on-wine)">${esc(m.tier)} · ${TIERS[m.tier]?.zh||''}</span>
+     <div style="display:flex;gap:24px;margin-top:16px"><div><div class="num" style="font-size:40px;font-weight:800;line-height:1">${fmt(avail(m))}</div><div style="font-size:16px;opacity:.8">可用积分</div></div>
+     <div><div class="num" style="font-size:40px;font-weight:800;line-height:1;opacity:.75">${fmt(pendingRedeem(m.phone))}</div><div style="font-size:16px;opacity:.8">兑换审核中</div></div></div></div>
+  <div class="sec">${pushCard()}</div>
+  <div class="sec">${tierRulesCard(m)}</div>
+  <div class="sec"><div class="sec-h"><h2>我的 NCP 卡</h2></div>${cardsOf(m.phone).map(c=>cardBlock(c)).join('')||'<div class="empty">还没有 NCP 卡。请联系教练开卡。</div>'}</div>
+  <div class="sec"><div class="sec-h"><h2>我的申请</h2></div>
+    ${reqs.length?`<div class="card" style="padding:4px 14px">${reqs.slice(0,12).map(r=>`<div class="hist"><div style="min-width:0"><b style="font-size:18px">${({redeem:'兑换',earn:'赚分',renew:'续卡'})[r.type]} ${nt(r.title)}</b><div class="sub">${dt(r.ts)}</div></div><div style="text-align:right">${r.type==='renew'?'':`<div class="num ${r.type==='redeem'?'d-minus':'d-plus'}">${r.type==='redeem'?'−':'+'}${fmt(r.points)}</div>`}<span class="badge ${r.status}">${({pending:'审核中',approved:'已通过',rejected:'未通过'})[r.status]}</span></div></div>`).join('')}</div>`:'<div class="empty">还没有申请记录。</div>'}</div>
+  <div class="sec" id="ledgerSec"><div class="sec-h"><h2>积分记录</h2></div>
+    ${led.length?`<div class="card" style="padding:4px 14px">${led.slice(0,30).map(l=>`<div class="hist"><div style="min-width:0"><b style="font-size:18px">${esc(l.reason)}</b><div class="sub">${dt(l.ts)}</div></div><div class="num ${l.delta<0?'d-minus':'d-plus'}">${l.delta<0?'−':'+'}${fmt(Math.abs(l.delta))}</div></div>`).join('')}</div>`:'<div class="empty">还没有积分记录。</div>'}</div>
+  <div class="sec"><button class="btn ghost block" data-act="logout">登出</button></div>`;
+}
+
+function scanOk(){ return !!scanCode&&!scanBad; }
+function vScan(){
+  const m=me();
+  if(scanResult) return `<div class="scan-ok"><div class="big-ic">${ic('check',40)}</div><h2 style="font-family:var(--f-display);font-size:30px">${scanResult.startsWith('刚刚')?'已经打过卡':scanResult.startsWith('正在')?'正在打卡…':'打卡成功'}</h2><p class="sub">${esc(scanResult)}</p></div>${m?cardsOf(m.phone).filter(c=>cardInfo(c).status==='active').map(c=>cardBlock(c)).join(''):''}
+    <div class="sec"><button class="btn ghost block" data-act="go" data-v="home">回到首页</button></div>`;
+  if(!scanOk()) return `<div class="scan-ok scan-bad"><div class="big-ic">${ic('history',40)}</div><h2 style="font-family:var(--f-display);font-size:30px">这个二维码已失效</h2><p class="sub">请扫描店内今天的打卡二维码。</p><button class="btn ghost" data-act="go" data-v="home">回到首页</button></div>`;
+  if(!m) return `<div class="scan-ok"><h2 style="font-family:var(--f-display);font-size:30px">到店打卡</h2><p class="sub">先登入你的会员账号</p></div>`+loginView();
+  const cs=cardsOf(m.phone).filter(c=>{const k=cardInfo(c);return k.status==='active'&&!k.notStarted;});
+  if(!cs.length) return `<div class="scan-ok scan-bad"><div class="big-ic">${ic('ticket',40)}</div><h2 style="font-family:var(--f-display);font-size:30px">你的 NCP 卡已经用完了</h2><p class="sub">申请续卡后，教练确认就可以继续打卡。</p></div>${renewBtn(m.phone)}<div class="sec"><button class="btn ghost block" data-act="go" data-v="home">回到首页</button></div>`;
+  return `<div class="scan-ok"><h2 style="font-family:var(--f-display);font-size:30px">${nt(m.name)}，欢迎来到俱乐部</h2><p class="sub">${dt(Date.now())}</p></div>${cs.map(c=>cardBlock(c)).join('')}`;
+}
+let scanBusy=false;
+async function doCheckin(c,force){
+  const r=await api('checkin',{cardId:c.id,code:scanCode,force:!!force});
+  if(r.recent) return {recent:true,msg:`刚刚已经打卡成功了，不用重复扫码。${c.name} 还剩 ${r.left} 次。`};
+  return {ok:true,msg:`打卡成功！每日消费 +${r.points} 分。${c.name} 还剩 ${r.left} 次。`};
+}
+async function autoScanCheckin(){
+  const m=me(); if(view!=='scan'||!scanOk()||!m||scanResult||scanBusy) return;
+  const cs=cardsOf(m.phone).filter(c=>{const k=cardInfo(c);return k.status==='active'&&!k.notStarted;});
+  if(cs.length!==1) return;
+  scanBusy=true; scanResult='正在打卡…'; render();
+  try{ const r=await doCheckin(cs[0],false); scanResult=r.msg; await refresh(); }
+  catch(e){ scanResult=null; if(e.code==='bad_qr') scanBad=true; else toast(e.message); render(); }
+  finally{ scanBusy=false; }
+}
+function readHash(){ const mt=(location.hash||'').match(/^#checkin-([a-z0-9]+)$/); if(mt){ scanCode=mt[1]; scanResult=null; scanBad=false; view='scan'; } }
+
+/* ---------- admin ---------- */
+function vAdmin(){
+  const pend=S.requests.filter(r=>r.status==='pending').length;
+  const tabs=[['requests',`审核${pend?' ('+pend+')':''}`],['notify','通知'],['rewards','礼物'],['tasks','任务'],['stats','每日统计'],['members','会员'],['cards','NCP卡'],['home','首页']];
+  let body='';
+  if(adminTab==='requests'){
+    const list=S.requests.slice().sort((a,b)=>(a.status==='pending'?0:1)-(b.status==='pending'?0:1)||b.ts-a.ts).slice(0,40);
+    body=list.length?`<div class="list">${list.map(r=>`<div class="arow"><div class="tx"><b>${({redeem:'兑换',earn:'赚分',renew:'续卡'})[r.type]} · ${nt(r.title)}</b><span>${nt(r.name)} · ${esc(r.phone)} · ${dt(r.ts)}${r.note?' · '+esc(r.note):''}</span></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${r.type==='renew'?`<span class="sub">${r.total} 次</span>`:`<span class="num ${r.type==='redeem'?'d-minus':'d-plus'}">${r.type==='redeem'?'−':'+'}${fmt(r.points)}</span>`}
+      ${r.status==='pending'?`<div style="display:flex;gap:6px"><button class="btn sm danger" data-act="reject" data-id="${esc(r.id)}">拒绝</button><button class="btn sm ok" data-act="approve" data-id="${esc(r.id)}">通过</button></div>`:`<span class="badge ${r.status}">${r.status==='approved'?'已通过':'未通过'}</span>`}</div></div>`).join('')}</div>`:'<div class="empty">目前没有待审核的申请。</div>';
+  } else if(adminTab==='rewards'){
+    const list=S.rewards.slice().sort((a,b)=>a.points-b.points);
+    body=`<button class="btn block" data-act="editReward" style="margin-bottom:12px">${ic('plus',18)} 新增礼物</button>
+      ${list.length?`<div class="list">${list.map(r=>`<button class="arow" data-act="editReward" data-id="${esc(r.id)}" style="text-align:left">${ph(r)}<div class="tx"><b>${nt(r.name)}</b><span>${esc(catOf(r.cat).zh)} · <span class="num">${fmt(r.points)}</span> pts${r.stock!=null?' · 库存 '+r.stock:''}${r.active===false?' · 已下架':''}</span></div>${ic('cog',18)}</button>`).join('')}</div>`:'<div class="empty">还没有礼物。按上方按钮添加第一个礼物。</div>'}`;
+  } else if(adminTab==='tasks'){
+    body=`<button class="btn block" data-act="editTask" style="margin-bottom:12px">${ic('plus',18)} 新增赚分任务</button>
+      ${S.tasks.length?`<div class="list">${activeTasksAll().map(t=>`<button class="arow" data-act="editTask" data-id="${esc(t.id)}" style="text-align:left"><span class="ph" style="background:var(--wine-soft);color:var(--wine);display:grid;place-items:center">${ic(t.icon||'star',22)}</span><div class="tx"><b>${nt(nameOf(t))}</b><span><span class="num">+${fmt(t.points)}</span> · ${nt(subOf(t))}${t.active===false?' · 已停用':''}</span></div>${ic('cog',18)}</button>`).join('')}</div>`:'<div class="empty">还没有任务。</div>'}`;
+  } else if(adminTab==='members'){
+    const q=memberQ.trim().toLowerCase();
+    const list=S.members.filter(m=>!q||m.name.toLowerCase().includes(q)||m.phone.includes(q)).sort((a,b)=>totalPts(b)-totalPts(a));
+    body=`<div class="btnrow" style="justify-content:flex-start;margin-bottom:12px"><button class="btn sm" data-act="exportPdf">导出 PDF 报表</button><button class="btn sm ghost" data-act="exportCsv">导出 Excel</button></div>
+    <div style="display:flex;gap:8px;margin-bottom:12px"><input class="inp" id="mq" placeholder="搜索名字或电话" value="${esc(memberQ)}"><button class="btn" data-act="editMember">${ic('plus',18)}</button></div>
+      ${list.length?`<div class="list">${list.map(m=>`<div class="arow mem"><div class="tx"><b>${nt(m.name)} <span class="tier ${esc(m.tier)}">${esc(m.tier)}</span>${tierInfo(m).manual?' <span class="badge pending">手动</span>':''}</b><span>${esc(m.phone)} · <span class="num">${fmt(totalPts(m))}</span> pts</span>${(st=>`<span style="display:block">共 ${st.nCards} 张卡 · 累计打卡 ${st.nCheckins} 次${st.last?' · 最近 '+st.last:''}${st.curInfo&&st.curInfo.status==='active'?` · 目前第 ${st.nCards?cardNo(st.cur):0} 张剩 ${st.curInfo.left} 次`:''}${unpaidOf(m.phone)?` · <b style="color:var(--warn)">未付款 ${unpaidOf(m.phone)} 张</b>`:''}</span>`)(memberStats(m))}</div>
+        <div class="btnrow"><button class="btn sm ghost" data-act="editMember" data-id="${esc(m.id)}">编辑</button><button class="btn sm ghost" data-act="ncp" data-id="${esc(m.id)}">NCP卡</button><button class="btn sm" data-act="addPts" data-id="${esc(m.id)}">加/减分</button></div></div>`).join('')}</div>`:'<div class="empty">还没有会员。按 + 新增会员。</div>'}`;
+  } else if(adminTab==='notify'){
+    const P=S.push||{devices:0,members:0};
+    body=`<div class="card"><b style="display:block;font-size:20px;margin-bottom:6px">发公告给全部会员</b>
+      <p class="sub" style="margin:0 0 12px"><b class="num">${P.members}</b> 位会员（${P.devices} 部手机）开启了手机通知，会马上收到；其他会员打开 App 时，会在右上角的 🔔 看到。</p>
+      <form id="noticeForm"><div class="field"><label for="n_t">标题</label><input class="inp" id="n_t" maxlength="80" placeholder="例如：本周六 Mega 活动"></div>
+      <div class="field"><label for="n_b">内容</label><textarea class="inp" id="n_b" rows="4" maxlength="600"></textarea></div>
+      <details style="margin-bottom:12px"><summary class="sub" style="cursor:pointer">English / Bahasa Melayu（选填）</summary>
+        <div class="field" style="margin-top:10px"><label for="n_et">标题（English）</label><input class="inp" id="n_et" maxlength="80"></div>
+        <div class="field"><label for="n_eb">内容（English）</label><textarea class="inp" id="n_eb" rows="3" maxlength="600"></textarea></div>
+        <div class="field"><label for="n_mt">标题（Bahasa Melayu）</label><input class="inp" id="n_mt" maxlength="80"></div>
+        <div class="field"><label for="n_mb">内容（Bahasa Melayu）</label><textarea class="inp" id="n_mb" rows="3" maxlength="600"></textarea></div>
+        <p class="sub" style="margin:0">选了英文或马来文的会员会收到对应的版本；没填就收到中文。</p></details>
+      <button class="btn block" type="submit">发送给全部会员</button></form></div>
+      <p class="sub" style="margin:12px 2px">另外，申请通过或被拒绝、NCP 卡只剩 2 次和用完的时候，系统会自动通知那位会员。</p>
+      <div class="sec-h" style="margin-top:18px"><h2>已发的公告</h2></div>
+      ${(S.bcasts||[]).length?`<div class="list">${S.bcasts.map(n=>`<div class="arow"><div class="tx"><b>${nt(n.title)}</b><span style="white-space:normal">${nt(n.body||'')}</span><span style="display:block">${fmtTs(n.ts)}</span></div><button class="btn sm danger" data-act="delNotice" data-id="${esc(n.id)}">删除</button></div>`).join('')}</div>`:'<div class="empty">还没有发过公告。</div>'}`;
+  } else if(adminTab==='stats'){
+    const days=dailyStats(), t=dailyStats(today(),today())[0];
+    const maxN=Math.max(1,...days.map(d=>d.n));
+    const sum=days.reduce((a,d)=>({n:a.n+d.n,pts:a.pts+d.pts}),{n:0,pts:0});
+    const uniq=new Set(S.checkins.filter(x=>x.date>=days[0].date&&x.date<=days[days.length-1].date).map(x=>x.phone)).size;
+    body=`<div class="stat-tiles"><div><span class="num big">${t.n}</span><span class="sub">今天打卡人次</span></div><div><span class="num big">${t.u}</span><span class="sub">今天打卡人数</span></div></div>
+    <div class="chips" style="margin-top:14px">${[7,30,90].map(n=>`<button class="chip ${statRange===n?'on':''}" data-act="statRange" data-v="${n}">最近 ${n} 天</button>`).join('')}<button class="chip ${statRange===0?'on':''}" data-act="statRange" data-v="0">自己选日期</button></div>
+    ${statRange===0?`<div class="row2" style="margin-bottom:12px"><div class="field" style="margin:0"><label for="sFrom">从</label><input class="inp" type="date" id="sFrom" value="${esc(rangeOf().from)}" max="${today()}"></div><div class="field" style="margin:0"><label for="sTo">到</label><input class="inp" type="date" id="sTo" value="${esc(rangeOf().to)}" max="${today()}"></div></div>`:''}
+    <div class="card"><div class="sub" style="margin-bottom:8px">${days[0].date} 至 ${days[days.length-1].date}（${days.length} 天）：共 <b class="num">${sum.n}</b> 人次 · <b class="num">${uniq}</b> 位不同会员 · 平均每天 <b class="num">${(sum.n/days.length).toFixed(1)}</b> 人次<br>${howTag('qr')} <b class="num">${days.reduce((a,d)=>a+d.self,0)}</b> 次　${howTag('staff')} <b class="num">${days.reduce((a,d)=>a+d.staff,0)}</b> 次<br><span style="font-size:14px">${HOW_LEGEND}</span></div>
+      <div class="bars ${days.length>14?'many':''}" style="--cols:${days.length}">${days.map(d=>`<div class="bar-col" title="${d.date}：${d.n} 人次 / ${d.u} 人"><span class="bar-v">${d.n||''}</span><i style="height:${Math.round(d.n/maxN*100)}%"></i></div>`).join('')}</div>
+      <div class="bar-x"><span>${days[0].date.slice(5)}</span><span>${days[days.length-1].date.slice(5)}</span></div></div>
+    <div class="btnrow" style="justify-content:flex-start;margin:14px 0"><button class="btn sm" data-act="exportDailyPdf">导出 PDF</button><button class="btn sm ghost" data-act="exportDailyCsv">导出 Excel</button></div>
+    <p class="sub" style="margin:-6px 0 12px">PDF 和 Excel 都包含每一次打卡的明细。${HOW_LEGEND}</p>
+    <div class="card" style="padding:4px 14px"><div class="hist" style="font-weight:700;font-size:15px"><span style="flex:1">日期</span><span style="width:46px;text-align:right">人次</span><span style="width:56px;text-align:right">${howTag('qr')}</span><span style="width:56px;text-align:right">${howTag('staff')}</span><span style="width:46px;text-align:right">人数</span></div>
+      ${days.slice().reverse().map(d=>`<div class="hist"><span style="flex:1;white-space:nowrap">${d.date.slice(5)} ${'日一二三四五六'[new Date(parseD(d.date)).getDay()]}</span><span class="num" style="width:46px;text-align:right">${d.n}</span><span class="num" style="width:56px;text-align:right">${d.self}</span><span class="num" style="width:56px;text-align:right;color:${d.staff?'var(--warn)':'inherit'}">${d.staff}</span><span class="num" style="width:46px;text-align:right">${d.u}</span></div>`).join('')}</div>`;
+  } else if(adminTab==='cards'){
+    const unpaidN=S.cards.filter(c=>!c.paid).length;
+    const rows=S.cards.filter(c=>cardFilter!=='unpaid'||!c.paid).map(c=>({c,k:cardInfo(c),m:S.members.find(x=>x.phone===c.phone)})).sort((a,b)=>(a.k.status==='active'?0:1)-(b.k.status==='active'?0:1)||a.k.left-b.k.left);
+    const todayN=S.checkins.filter(x=>x.date===today()).length;
+    const st=S.settings||{}; const link=qrLink();
+    const qrPanel=`<div class="card" style="margin-bottom:14px">
+      <div class="field"><label for="qm">打卡方式</label><select class="inp" id="qm">
+        <option value="fixed" ${qrMode()==='fixed'?'selected':''}>扫码打卡 · 固定二维码（打印贴在店里）</option>
+        <option value="daily" ${qrMode()==='daily'?'selected':''}>扫码打卡 · 二维码每天自动更换</option>
+        <option value="off" ${qrMode()==='off'?'selected':''}>不用扫码 · 顾客在 App 里直接打卡</option></select></div>
+      ${qrMode()==='off'?'':!st.qrKey?`<button class="btn block" data-act="qrInit">生成打卡二维码</button>`:
+      `<div class="qrwrap"><div class="qrbox" id="qrbox"></div>
+       <div class="sub">${qrMode()==='daily'?`今天（${today()}）的二维码，明天会自动更换。请每天放在柜台给顾客扫。`:'固定二维码，打印一次就可以一直用。'}</div>
+       <div class="btnrow" style="justify-content:center"><button class="btn sm" data-act="qrSave">下载二维码海报</button><button class="btn sm ghost" data-act="qrReset">作废并重新生成</button></div></div>`}
+    </div>`;
+    body=qrPanel+`<p class="sub" style="margin:-4px 0 12px">今天共有 <b class="num">${todayN}</b> 人次打卡。开新卡请到「会员」按「NCP卡」。</p>
+    <div class="chips"><button class="chip ${cardFilter==='all'?'on':''}" data-act="cardFilter" data-v="all">全部卡 ${S.cards.length}</button><button class="chip ${cardFilter==='unpaid'?'on':''}" data-act="cardFilter" data-v="unpaid">未付款 ${unpaidN}</button></div>
+    ${rows.length?`<div class="list">${rows.map(({c,k,m})=>`<button class="arow" data-act="ncp" data-id="${esc(m?m.id:'')}" style="text-align:left"><div class="tx"><b>${nt(m?m.name:c.phone)} · 第 ${cardNo(c)} 张 · ${esc(c.name)}</b><span style="display:block;margin:2px 0">${payTag(c)}</span><span>剩 <span class="num">${k.left}</span> / ${+c.total||0} 次${k.daysLeft!=null?' · 剩 '+k.daysLeft+' 天':''}${k.todayN?' · 今天打了 '+k.todayN+' 次':''}</span></div><span class="badge ${{active:'approved',done:'pending',expired:'rejected'}[k.status]}">${{active:'进行中',done:'已用完',expired:'已过期'}[k.status]}</span></button>`).join('')}</div>`:'<div class="empty">还没有 NCP 卡。到「会员」为会员开卡。</div>'}`;
+  } else {
+    const st=S.settings||{};
+    const B=brand();
+    body=`<form id="brandForm" class="card" style="margin-bottom:14px"><b style="display:block;margin-bottom:10px;font-size:20px">俱乐部资料</b>
+      <div class="field"><label>Logo / App 图标（正方形效果最好）</label><div class="uploader"><img src="/icon-192.png?v=${esc(st.logo||'d')}" alt="" style="width:84px;height:84px;border-radius:18px;flex:none">
+        <div style="display:flex;flex-direction:column;gap:6px"><label class="btn sm ghost" for="lfile">上传 Logo</label><input type="file" id="lfile" accept="image/*" hidden>${st.logo?'<button type="button" class="btn sm danger" data-act="clearLogo">改回默认图标</button>':''}</div></div></div>
+      <div class="field"><label for="b_n">俱乐部名称</label><input class="inp" id="b_n" value="${esc(B.name)}"></div>
+      <div class="field"><label for="b_s">副标题（显示在名称下面）</label><input class="inp" id="b_s" value="${esc(B.sub)}"></div>
+      <div class="field"><label for="b_sh">手机主画面上的短名称（建议 12 个字以内）</label><input class="inp" id="b_sh" maxlength="20" value="${esc(B.short)}"></div>
+      <button class="btn block" type="submit">保存俱乐部资料</button></form>
+    <form id="homeForm" class="card"><b style="display:block;margin-bottom:10px;font-size:20px">首页横幅</b><div class="field"><label>横幅照片（建议横向 16:9）</label><div class="uploader wide"><div class="ph" id="hp">${imgSrc(st)?`<img src="${esc(imgSrc(st))}" alt="">`:ic('upload',26)}</div>
+      <div style="display:flex;flex-direction:column;gap:6px"><label class="btn sm ghost" for="hfile">上传照片</label><input type="file" id="hfile" accept="image/*" hidden>${imgSrc(st)?'<button type="button" class="btn sm danger" data-act="clearHomePhoto">移除照片</button>':''}</div></div></div>
+      <div class="field"><label for="h_e">小标题</label><input class="inp" id="h_e" value="${esc(st.eyebrow||'')}"></div>
+      <div class="field"><label for="h_t">标题（按 Enter 换行）</label><textarea class="inp" id="h_t" rows="2" style="min-height:0">${esc(st.title||'')}</textarea></div>
+      <div class="field"><label for="h_s">说明</label><textarea class="inp" id="h_s">${esc(st.sub||'')}</textarea></div>
+      <div class="row2"><div class="field"><label for="h_ten">标题（English）</label><textarea class="inp" id="h_ten" rows="2" style="min-height:0">${esc(st.title_en||'')}</textarea></div>
+      <div class="field"><label for="h_tms">标题（Bahasa Melayu）</label><textarea class="inp" id="h_tms" rows="2" style="min-height:0">${esc(st.title_ms||'')}</textarea></div></div>
+      <div class="row2"><div class="field"><label for="h_sen">说明（English）</label><input class="inp" id="h_sen" value="${esc(st.sub_en||'')}"></div>
+      <div class="field"><label for="h_sms">说明（Bahasa Melayu）</label><input class="inp" id="h_sms" value="${esc(st.sub_ms||'')}"></div></div>
+      <div class="field"><label for="h_terms">兑换须知（一行一条）</label><textarea class="inp" id="h_terms" rows="6">${esc(termsText())}</textarea></div>
+      <button class="btn block" type="submit">保存首页</button></form>`;
+  }
+  return `<div class="sec-h"><h2 style="font-family:var(--f-display);font-size:30px">管理后台</h2><button class="link" data-act="adminLogout">退出管理</button></div>
+  <div class="seg">${tabs.map(([k,l])=>`<button class="${adminTab===k?'on':''}" data-act="atab" data-v="${k}">${l}</button>`).join('')}</div>${body}`;
+}
+const activeTasksAll=()=>S.tasks.slice().sort((a,b)=>(a.order??0)-(b.order??0));
+
+/* ---------- render ---------- */
+function render(){
+  const app=document.getElementById('app');
+  const top=`<header class="top"><div class="brand"><img class="logo" src="/icon-192.png?v=${esc((S.settings&&S.settings.logo)||'d')}" alt="" width="40" height="40"><div><b>${nt(brand().name)}</b><small>${esc(brand().sub)}</small></div></div><div style="display:flex;gap:8px;align-items:center">${isAdmin?'<span class="demo">管理员</span>':''}<button class="bellbtn" data-act="notices" aria-label="通知">${ic('bell',20)}${unreadN()?`<span class="dot">${unreadN()>9?'9+':unreadN()}</span>`:''}</button><button class="langbtn" data-act="lang" aria-label="语言 Language"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg><span translate="no">${({zh:'中文',en:'EN',ms:'BM'})[LANG]}</span></button></div></header>`;
+  if(!loaded) return;
+  if(view==='admin'&&!isAdmin) view='home';
+  const v=({home:vHome,earn:vEarn,shop:vShop,me:vMe,admin:vAdmin,scan:vScan}[view]||vHome)();
+  const y=window.scrollY; app.innerHTML=top+v; window.scrollTo(0,y);
+  const tabs=[['home','home','首页'],['earn','bolt','赚分'],['shop','gift','兑换'],['me','user','我的']].concat(isAdmin?[['admin','cog','管理']]:[]);
+  const nav=document.getElementById('tabs'); nav.hidden=false;
+  const tb=([k,i,l])=>`<button class="tab ${view===k?'on':''}" data-act="go" data-v="${k}">${ic(i,22)}${l}</button>`;
+  nav.innerHTML=`<div class="tabs-in">${tabs.slice(0,2).map(tb).join('')}<button class="tab scan" data-act="scanQR" aria-label="扫码打卡"><span class="bub">${ic('qr',28)}</span>扫码打卡</button>${tabs.slice(2).map(tb).join('')}</div>`;
+  if(reSheet) reSheet();
+  const qb=document.getElementById('qrbox'); if(qb&&qrLink()&&window.QRCode){ new QRCode(qb,{text:qrLink(),width:440,height:440,colorDark:'#561226',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M}); }
+  const qm=document.getElementById('qm'); if(qm) qm.onchange=e=>run(()=>putSettings({...S.settings,qrMode:e.target.value}),'打卡方式已更新');
+  if(view==='scan') setTimeout(autoScanCheckin,0);
+  const mq=document.getElementById('mq'); if(mq){ mq.oninput=e=>{memberQ=e.target.value; const p=mq.selectionStart; render(); const n=document.getElementById('mq'); n.focus(); n.setSelectionRange(p,p);} }
+  const lf=document.getElementById('lfile'); if(lf) lf.onchange=async e=>{const f=e.target.files[0]; if(!f) return; toast('正在上传 Logo…'); try{ const data=await squarePng(f,512); const r=await api('admin/photo',{data}); await putSettings({...S.settings,logo:r.id}); await refresh(); toast('Logo 已更新'); }catch(err){ toast('上传失败：'+(err.message||'请稍后再试')); } };
+  document.title=brand().name;
+  const hf=document.getElementById('hfile'); if(hf) hf.onchange=async e=>{const f=e.target.files[0]; if(!f) return; toast('正在上传照片…'); try{const p=await uploadPhoto(f); await putSettings({...S.settings,...p}); toast('横幅照片已更新');}catch(err){toast('上传失败：'+(err.message||'请稍后再试'))}};
+}
+
+/* ---------- sheet & toast ---------- */
+let reSheet=null;
+let camStream=null, camTimer=null;
+function stopCam(){ if(camTimer){ cancelAnimationFrame(camTimer); camTimer=null; } if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; } }
+function loadJsQR(){ return window.jsQR?Promise.resolve():new Promise((res,rej)=>{const sc=document.createElement('script'); sc.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'; sc.onload=res; sc.onerror=rej; document.head.appendChild(sc);}); }
+function gotCode(text){
+  const mt=String(text||'').match(/#checkin-([a-z0-9]+)/);
+  if(!mt){ toast('这不是 '+brand().name+' 的打卡二维码'); return false; }
+  stopCam(); closeSheet(); scanCode=mt[1]; scanResult=null; scanBad=false; view='scan'; render(); window.scrollTo(0,0); return true;
+}
+async function openScanner(){
+  openSheet(`<h3>扫码打卡</h3><div class="cam"><video id="camv" playsinline muted autoplay></video><div class="frame"></div></div>
+    <p class="sub" id="camMsg" style="margin:12px 0 0;text-align:center">把柜台的二维码放进框里</p>
+    <div class="actions" style="margin-top:12px"><button class="btn ghost" data-act="close">取消</button></div>`);
+  const msg=t=>{const el=document.getElementById('camMsg'); if(el) el.textContent=t;};
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ msg('这部手机不能在这里打开相机。请直接用手机的相机 App 扫柜台的二维码。'); return; }
+  try{ camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}); }
+  catch(e){ msg('没有相机权限。请允许使用相机，或直接用手机的相机 App 扫柜台的二维码。'); return; }
+  const v=document.getElementById('camv'); if(!v){ stopCam(); return; }
+  v.srcObject=camStream; try{ await v.play(); }catch(_){}
+  let detector=null;
+  if('BarcodeDetector' in window){ try{ detector=new BarcodeDetector({formats:['qr_code']}); }catch(_){ detector=null; } }
+  if(!detector){ try{ await loadJsQR(); }catch(_){ msg('扫描工具载入失败，请直接用手机的相机 App 扫二维码。'); return; } }
+  const cv=document.createElement('canvas'), cx=cv.getContext('2d',{willReadFrequently:true});
+  let busy=false;
+  const tick=async()=>{
+    if(!camStream) return;
+    if(!busy&&v.readyState>=2){ busy=true;
+      try{
+        if(detector){ const r=await detector.detect(v); if(r&&r[0]&&gotCode(r[0].rawValue)) return; }
+        else { const w=v.videoWidth, h=v.videoHeight; const k=Math.min(1,640/Math.max(w,h)); cv.width=Math.round(w*k); cv.height=Math.round(h*k);
+          cx.drawImage(v,0,0,cv.width,cv.height); const d=cx.getImageData(0,0,cv.width,cv.height); const r=window.jsQR(d.data,cv.width,cv.height,{inversionAttempts:'dontInvert'}); if(r&&gotCode(r.data)) return; }
+      }catch(_){}
+      busy=false; }
+    camTimer=requestAnimationFrame(tick);
+  };
+  tick();
+}
+function openSheet(html){ reSheet=null; const l=document.getElementById('layer'); l.innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`; }
+function closeSheet(){ stopCam(); reSheet=null; document.getElementById('layer').innerHTML=''; }
+let tt; function toast(t){ let el=document.querySelector('.toast'); if(!el){el=document.createElement('div');el.className='toast';document.body.appendChild(el);} el.textContent=t; clearTimeout(tt); tt=setTimeout(()=>el.remove(),2600); }
+
+function rewardSheet(r){
+  const m=me(); const out=r.stock!=null&&r.stock<=0; const a=avail(m);
+  openSheet(`${ph(r,'','border-radius:16px;margin-bottom:14px;aspect-ratio:4/3')}
+    <h3 style="margin-bottom:2px">${nt(nameOf(r))}</h3><div class="sub">${nt(subOf(r))} · ${esc(catOf(r.cat).zh)}</div>
+    ${r.desc?`<p style="margin:10px 0 0">${esc(r.desc)}</p>`:''}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0"><span class="pill num" style="font-size:21px;padding:6px 14px">${fmt(r.points)} pts</span><span class="sub">${r.stock!=null?'库存 '+r.stock:''}</span></div>
+    ${!m?`<button class="btn block" data-act="go" data-v="me">登入或注册会员</button>`
+      :out?`<button class="btn block" disabled>已兑完</button>`
+      :a<r.points?`<button class="btn block" disabled>还差 ${fmt(r.points-a)} 分</button>`
+      :`<p class="sub">兑换后剩余 <b class="num">${fmt(a-r.points)}</b> 分。教练确认后即可领取礼物。</p><div class="terms" style="margin:10px 0"><b>兑换须知</b>${termsHtml()}<p class="sub" style="margin:6px 0 0">按「确认兑换」即表示同意以上条款。</p></div><div class="actions"><button class="btn ghost" data-act="close">取消</button><button class="btn" data-act="redeem" data-id="${esc(r.id)}">确认兑换</button></div>`}`);
+}
+function claimSheet(t){
+  const m=me();
+  openSheet(`<h3>${nt(nameOf(t))}</h3><p class="sub" style="margin-top:-6px">${nt(subOf(t))}${t.note?' · '+esc(t.note):''}</p>
+    <div style="margin:14px 0"><span class="plus num" style="font-size:30px">+${fmt(t.points)}</span> <span class="sub">积分</span></div>
+    ${!m?`<button class="btn block" data-act="go" data-v="me">登入或注册会员</button>`:
+    `<div class="field"><label for="cn">备注（选填，例如活动名称或链接）</label><input class="inp" id="cn"></div>
+     <div class="actions"><button class="btn ghost" data-act="close">取消</button><button class="btn" data-act="doClaim" data-id="${esc(t.id)}">提交申请</button></div>`}`);
+}
+function paySheet(c){
+  const m=S.members.find(x=>x.phone===c.phone);
+  openSheet(`<h3>${c.paid?'修改付款记录':'确认已付款'}</h3><p class="sub" style="margin-top:-6px">${nt(m?m.name:c.phone)} · 第 ${cardNo(c)} 张 · ${esc(c.name)}</p>
+   <form id="payForm" data-id="${esc(c.id)}">
+    <div class="field"><label for="pa_d">付款日期</label><input class="inp" type="date" id="pa_d" value="${esc(c.paidAt||today())}" max="${today()}"></div>
+    <div class="row2"><div class="field"><label for="pa_a">金额 RM（选填）</label><input class="inp num" id="pa_a" inputmode="decimal" value="${esc(c.paidAmount||'')}"></div>
+    <div class="field"><label for="pa_m">付款方式</label><select class="inp" id="pa_m">${['现金','银行转账','TnG eWallet','DuitNow / QR','信用卡','其他'].map(x=>`<option ${c.payMethod===x?'selected':''}>${x}</option>`).join('')}</select></div></div>
+    <div class="field"><label for="pa_n">备注（选填）</label><input class="inp" id="pa_n" value="${esc(c.paidNote||'')}"></div>
+    <div class="actions">${c.paid?`<button type="button" class="btn danger" data-act="unpayCard" data-id="${esc(c.id)}">改回未付款</button>`:`<button type="button" class="btn ghost" data-act="backNcp" data-v="${esc(c.phone)}">取消</button>`}<button class="btn ok" type="submit">确认已付款</button></div></form>`);
+}
+function ncpSheet(phone){
+  const m=S.members.find(x=>x.phone===phone); if(!m) return;
+  const cs=cardsOf(phone); const keep=document.getElementById('c_s')?{n:document.getElementById('c_n').value,t:document.getElementById('c_t').value,d:document.getElementById('c_d').value,s:document.getElementById('c_s').value}:null;
+  openSheet(`<h3>${nt(m.name)} · NCP 卡</h3>
+   ${cs.map(c=>{const k=cardInfo(c);return cardBlock(c,true)+(k.ins.length?`<details style="margin-top:8px"><summary class="sub" style="cursor:pointer">打卡记录（${k.ins.length} 次 · 自 ${k.ins.filter(x=>x.by!=='staff').length} · 帮 ${k.ins.filter(x=>x.by==='staff').length}）</summary><div class="card" style="padding:4px 12px;margin-top:6px"><div class="sub" style="font-size:14px;padding-top:6px">${HOW_LEGEND}</div>${k.ins.slice().reverse().map((x,i)=>{const d=new Date(x.ts);return `<div class="hist" style="font-size:15px"><span>第 ${k.ins.length-i} 次 · ${x.date} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</span>${howTag(x.by)}</div>`}).join('')}</div></details>`:'')+`<div class="btnrow" style="margin:8px 0 16px">${c.paid?`<button class="btn sm ghost" data-act="payCard" data-id="${esc(c.id)}">修改付款</button>`:`<button class="btn sm ok" data-act="payCard" data-id="${esc(c.id)}">确认已付款</button>`}<button class="btn sm danger" data-act="delCard" data-id="${esc(c.id)}">删除这张卡</button><button class="btn sm ghost" data-act="undoCheckin" data-id="${esc(c.id)}" ${k.used?'':'disabled'}>撤销最后一次打卡</button><button class="btn sm" data-act="staffCheckin" data-id="${esc(c.id)}" ${k.status!=='active'||k.notStarted?'disabled':''}>帮他打卡</button></div>`}).join('')||'<div class="empty" style="margin-bottom:14px">这位会员还没有 NCP 卡。</div>'}
+   <form id="cf" data-phone="${esc(phone)}" class="card"><b style="display:block;margin-bottom:10px">开新卡</b>
+    <div class="field"><label for="c_ty">卡种</label><select class="inp" id="c_ty">${CARD_TYPES.map((t,i)=>`<option value="${i}">${t.n}（${t.total} 次）</option>`).join('')}<option value="x">自定义</option></select></div>
+    <div class="field"><label for="c_n">卡名称</label><input class="inp" id="c_n" required value="${esc(keep?keep.n:CARD_TYPES[0].n)}"></div>
+    <div class="row2"><div class="field"><label for="c_t">总次数</label><input class="inp num" id="c_t" type="number" min="1" required value="${keep?esc(keep.t):CARD_TYPES[0].total}"></div>
+    <div class="field"><label for="c_d">有效天数（留空 = 不限期）</label><input class="inp num" id="c_d" type="number" min="1" value="${keep?esc(keep.d):''}"></div></div>
+    <div class="field"><label for="c_pay">付款</label><select class="inp" id="c_pay"><option value="0">还没付款（之后再确认）</option><option value="1">今天已付款</option></select></div>
+    <div class="field"><label for="c_s">开始日期</label><input class="inp" id="c_s" type="date" required value="${keep?esc(keep.s):today()}"></div>
+    <button class="btn block" type="submit">开卡</button></form>`);
+  reSheet=()=>ncpSheet(phone);
+  document.getElementById('c_ty').onchange=e=>{const t=CARD_TYPES[+e.target.value]; if(!t) return; document.getElementById('c_n').value=t.n; document.getElementById('c_t').value=t.total; document.getElementById('cf').dataset.kind=t.kind;};
+}
+let pendingPhoto=null;
+function rewardForm(r){
+  r=r||{cat:'lifestyle',active:true}; pendingPhoto=null;
+  openSheet(`<h3>${r.id?'编辑礼物':'新增礼物'}</h3><form id="rf" data-id="${esc(r.id||'')}">
+   <div class="field"><label>礼物照片</label><div class="uploader"><div id="rp">${ph(r)}</div><div style="display:flex;flex-direction:column;gap:6px"><label class="btn sm ghost" for="rfile">${ic('upload',16)} 上传照片</label><input type="file" id="rfile" accept="image/*" hidden><span class="sub">正方形照片效果最好</span></div></div></div>
+   <div class="field"><label for="f_n">中文名称</label><input class="inp" id="f_n" required value="${esc(r.name||'')}"></div>
+   <div class="field"><label for="f_en">英文名称</label><input class="inp" id="f_en" value="${esc(r.en||'')}"></div>
+   <div class="row2"><div class="field"><label for="f_c">分类</label><select class="inp" id="f_c">${CATS.map(c=>`<option value="${c.id}" ${r.cat===c.id?'selected':''}>${c.zh}</option>`).join('')}</select></div>
+   <div class="field"><label for="f_p">所需积分</label><input class="inp num" id="f_p" type="number" min="0" required value="${r.points??''}"></div></div>
+   <div class="row2"><div class="field"><label for="f_s">库存（空白 = 不限）</label><input class="inp num" id="f_s" type="number" min="0" value="${r.stock??''}"></div>
+   <div class="field"><label for="f_a">状态</label><select class="inp" id="f_a"><option value="1" ${r.active!==false?'selected':''}>上架</option><option value="0" ${r.active===false?'selected':''}>下架</option></select></div></div>
+   <div class="field"><label for="f_d">介绍（选填）</label><textarea class="inp" id="f_d">${esc(r.desc||'')}</textarea></div>
+   <div class="actions">${r.id?`<button type="button" class="btn danger" data-act="delReward" data-id="${esc(r.id)}">删除</button>`:'<button type="button" class="btn ghost" data-act="close">取消</button>'}<button class="btn" type="submit">保存</button></div></form>`);
+  document.getElementById('rfile').onchange=async e=>{const f=e.target.files[0]; if(!f) return; toast('正在上传照片…'); try{pendingPhoto=await uploadPhoto(f); document.getElementById('rp').innerHTML=ph({...r,...pendingPhoto}); toast('照片已上传，按保存完成');}catch(err){toast('上传失败：'+(err.message||'请稍后再试'))}};
+}
+function taskForm(t){
+  t=t||{active:true,icon:'star'};
+  openSheet(`<h3>${t.id?'编辑任务':'新增任务'}</h3><form id="tf" data-id="${esc(t.id||'')}">
+   <div class="field"><label for="t_n">任务名称</label><input class="inp" id="t_n" required value="${esc(t.name||'')}"></div>
+   <div class="field"><label for="t_en">英文名称</label><input class="inp" id="t_en" value="${esc(t.en||'')}"></div>
+   <div class="row2"><div class="field"><label for="t_p">积分</label><input class="inp num" id="t_p" type="number" required value="${t.points??''}"></div>
+   <div class="field"><label for="t_i">图标</label><select class="inp" id="t_i">${TASK_ICONS.map(k=>`<option ${t.icon===k?'selected':''}>${k}</option>`).join('')}</select></div></div>
+   <div class="field"><label for="t_no">备注（选填）</label><input class="inp" id="t_no" value="${esc(t.note||'')}"></div>
+   <div class="row2"><div class="field"><label for="t_pr">首页限时推广</label><select class="inp" id="t_pr"><option value="0">否</option><option value="1" ${t.promo?'selected':''}>是</option></select></div>
+   <div class="field"><label for="t_a">状态</label><select class="inp" id="t_a"><option value="1">启用</option><option value="0" ${t.active===false?'selected':''}>停用</option></select></div></div>
+   <div class="actions">${t.id?`<button type="button" class="btn danger" data-act="delTask" data-id="${esc(t.id)}">删除</button>`:'<button type="button" class="btn ghost" data-act="close">取消</button>'}<button class="btn" type="submit">保存</button></div></form>`);
+}
+function memberForm(m){
+  m=m||{tier:'Silver'};
+  openSheet(`<h3>${m.id?'编辑会员':'新增会员'}</h3><form id="mf" data-id="${esc(m.id||'')}">
+   <div class="field"><label for="m_n">名字</label><input class="inp" id="m_n" required value="${esc(m.name||'')}"></div>
+   <div class="field"><label for="m_p">手机号码（会员用这个号码登入）</label><input class="inp" id="m_p" inputmode="tel" required ${m.id?'readonly':''} value="${esc(m.phone||'')}"></div>
+   ${m.id?`<div class="field"><label>登入密码</label><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="sub">${m.hasPin?'会员已经设定密码':'会员还没设定密码（第一次登入时自己设定）'}</span>${m.hasPin?`<button type="button" class="btn sm ghost" data-act="resetPin" data-id="${esc(m.id)}">重设密码</button>`:''}</div></div>`:''}
+   ${m.id?(t=>`<div class="card" style="margin-bottom:12px;padding:12px 14px"><b>目前等级：${t.tier}</b><div class="sub">10+1 卡 ${t.n10} 张 · 30 天卡 ${t.n30} 张（App 里开过的卡 + 以前买的；30 天卡 1 张 = 10+1 卡 3 张，合计 ${t.score}）${t.next&&!t.manual?'<br>'+tierProgress(m):''}</div></div>`)(tierInfo(m)):''}
+   <div class="row2"><div class="field"><label for="m_p10">以前买过的 10+1 卡</label><input class="inp num" id="m_p10" type="number" min="0" value="${+m.prior10||0}"></div>
+   <div class="field"><label for="m_p30">以前买过的 30 天卡</label><input class="inp num" id="m_p30" type="number" min="0" value="${+m.prior30||0}"></div></div>
+   <p class="sub" style="margin:-6px 0 12px">用 App 之前买过的卡填在这里，会一起算进等级。</p>
+   <div class="field"><label for="m_t">会员等级</label><select class="inp" id="m_t"><option value="">自动（按买卡数量）</option>${Object.keys(TIERS).map(k=>`<option value="${k}" ${m.tierOverride===k?'selected':''}>手动设定：${k} · ${TIERS[k].zh}</option>`).join('')}</select></div>
+   <div class="actions">${m.id?`<button type="button" class="btn danger" data-act="delMember" data-id="${esc(m.id)}">删除</button>`:'<button type="button" class="btn ghost" data-act="close">取消</button>'}<button class="btn" type="submit">保存</button></div></form>`);
+}
+function ptsForm(m){
+  openSheet(`<h3>${nt(m.name)} · 加/减分</h3><p class="sub" style="margin-top:-6px">目前 <b class="num">${fmt(totalPts(m))}</b> 分</p><form id="pf" data-id="${esc(m.id)}">
+   <div class="field"><label for="p_t">选择任务</label><select class="inp" id="p_t"><option value="">自定义</option>${activeTasks().map(t=>`<option value="${esc(t.id)}">${nt(nameOf(t))} (+${t.points})</option>`).join('')}</select></div>
+   <div class="row2"><div class="field"><label for="p_v">积分（扣分用负数）</label><input class="inp num" id="p_v" type="number" required></div>
+   <div class="field"><label for="p_r">原因</label><input class="inp" id="p_r"></div></div>
+   <div class="actions"><button type="button" class="btn ghost" data-act="close">取消</button><button class="btn" type="submit">确认</button></div></form>`);
+  document.getElementById('p_t').onchange=e=>{const t=S.tasks.find(x=>x.id===e.target.value); if(t){ let v=t.auto?ckPts(m.phone):t.points; document.getElementById('p_v').value=v; document.getElementById('p_r').value=t.name+' '+(t.en||'');}};
+}
+
+/* ---------- actions ---------- */
+let armed=null;
+function confirmTwice(key,btn){ if(armed===key) {armed=null; return true;} armed=key; btn.textContent='再按一次确认删除'; setTimeout(()=>{if(armed===key)armed=null},3000); return false; }
+async function adjust(phone,delta,reason){ await api('admin/adjust',{phone,delta,reason}); }
+async function run(fn,ok){ try{ await fn(); if(ok) toast(ok); try{ await refresh(); }catch(_){} }catch(e){ if(e.code==='no_admin'){ adminToken=null; ls.set('vw_admin',null); isAdmin=false; } toast('没有成功：'+(e.message||'请稍后再试')); try{ await refresh(); }catch(_){} } }
+
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const a=b.dataset.act, id=b.dataset.id, v=b.dataset.v;
+  if(a==='close'){ if(e.target===b||b.tagName==='BUTTON') closeSheet(); return; }
+  if(a==='go'){ closeSheet(); if(view==='scan'){ scanCode=null; scanResult=null; try{history.replaceState(null,'',location.pathname+location.search)}catch(_){} } view=v; render(); window.scrollTo(0,0); return; }
+  if(a==='lang'){ openSheet(`<h3>语言 · Language · Bahasa</h3><div class="list">${LANGS.map(([k,l])=>`<button class="task" data-act="setLang" data-v="${k}" style="text-align:left"><div class="tx" translate="no"><b>${l}</b></div>${LANG===k?ic('check',20):''}</button>`).join('')}</div>`); return; }
+  if(a==='setLang'){ setLang(v); return; }
+  if(a==='notices'){ openNotices(); return; }
+  if(a==='pushOn'){ enablePush(b); return; }
+  if(a==='pushOff'){ disablePush(); return; }
+  if(a==='scanQR'){ openScanner(); return; }
+  if(a==='cat'){ cat=v; render(); return; }
+  if(a==='atab'){ adminTab=v; render(); return; }
+  if(a==='history'){ view='me'; render(); document.getElementById('ledgerSec')?.scrollIntoView({block:'start'}); return; }
+  if(a==='logout'){ await unlinkPush(); try{ await api('logout',{}); }catch(_){} token=null; ls.set('vw_token',null); myPhone=null; loginStep='phone'; await refresh().catch(()=>render()); return; }
+  if(a==='loginBack'){ loginStep='phone'; render(); return; }
+  if(a==='adminLogin'){ openSheet(`<h3>店家登入</h3><form id="adminForm"><div class="field"><label for="apw">管理员密码</label><input class="inp" id="apw" type="password" autocomplete="current-password"></div><button class="btn block" type="submit">登入管理后台</button></form>`); setTimeout(()=>document.getElementById('apw')?.focus(),50); return; }
+  if(a==='adminLogout'){ try{ await api('admin/logout',{}); }catch(_){} adminToken=null; ls.set('vw_admin',null); isAdmin=false; view='home'; await refresh().catch(()=>render()); return; }
+  if(a==='reward'){ const r=S.rewards.find(x=>x.id===id); if(r) rewardSheet(r); return; }
+  if(a==='claim'){ const t=S.tasks.find(x=>x.id===id); if(t) claimSheet(t); return; }
+  if(a==='redeem'){ const r=S.rewards.find(x=>x.id===id), m=me(); if(!r||!m) return; if(avail(m)<r.points) return toast('积分不足');
+    b.disabled=true; closeSheet(); await run(()=>api('request',{type:'redeem',rewardId:r.id}),'兑换申请已提交，等待教练确认'); return; }
+  if(a==='doClaim'){ const t=S.tasks.find(x=>x.id===id), m=me(); if(!t||!m) return; b.disabled=true;
+    const note=document.getElementById('cn').value.trim(); closeSheet(); await run(()=>api('request',{type:'earn',taskId:t.id,note}),'申请已提交，等待教练审核'); return; }
+  if(a==='checkin'){ const c=S.cards.find(x=>x.id===id), m=me(); if(!c||!m||c.phone!==m.phone) return; const k=cardInfo(c); if(k.status!=='active'||k.notStarted) return;
+    if(qrMode()!=='off'&&!(view==='scan'&&scanOk())) return toast('请扫描店内的二维码打卡');
+    if(k.recent&&!confirmTwice('ck'+id,b)){ b.textContent='刚刚已打卡成功，再按一次才会再扣 1 次'; return; }
+    b.disabled=true;
+    try{ const r=await doCheckin(c,k.recent); toast(r.msg); if(view==='scan') scanResult=r.msg; }
+    catch(e){ if(e.code==='bad_qr'){ scanBad=true; } toast(e.message); }
+    await refresh().catch(()=>render()); return; }
+  if(a==='renew'){ const m=me(); if(!m) return;
+    openSheet(`<h3>申请续卡</h3><p class="sub" style="margin-top:-6px">选择你要的配套，教练确认后新卡就会开通。</p>
+      <div class="list" style="margin-top:12px">${CARD_TYPES.map((t,i)=>`<button class="task" data-act="doRenew" data-v="${i}" style="text-align:left"><span class="ic">${ic('ticket',22)}</span><div class="tx"><b>${esc(t.n)}</b><span>${t.total} 次打卡</span></div>${ic('plus',18)}</button>`).join('')}</div>`); return; }
+  if(a==='doRenew'){ const m=me(), t=CARD_TYPES[+v]; if(!m||!t) return;  if(hasPendingRenew(m.phone)){ closeSheet(); return toast('你已经有一个续卡申请在审核中'); }
+    b.disabled=true; closeSheet(); await run(()=>api('request',{type:'renew',cardName:t.n,total:t.total,kind:t.kind}),'续卡申请已提交，等待教练确认'); return; }
+  if(!isAdmin) return;
+  if(a==='qrInit'||a==='qrReset'){ if(a==='qrReset'&&!confirmTwice(a,b)){ b.textContent='再按一次作废旧二维码'; return; }
+    await run(()=>putSettings({...S.settings,qrKey:uid()+uid(),qrMode:qrMode()}),a==='qrInit'?'打卡二维码已生成':'旧二维码已作废，请重新下载'); return; }
+  if(a==='qrSave'){ await saveQrPoster(); return; }
+  if(a==='clearLogo'){ await run(()=>putSettings({...S.settings,logo:null}),'已改回默认图标'); return; }
+  if(a==='exportPdf'){ exportPdf(); return; }
+  if(a==='exportDailyPdf'){ exportDailyPdf(); return; }
+  if(a==='exportDailyCsv'){ exportDailyCsv(); return; }
+  if(a==='statRange'){ statRange=+v; if(statRange===0){ const r={from:dt(parseD(today())-29*DAY),to:today()}; statFrom=statFrom||r.from; statTo=statTo||r.to; } render(); return; }
+  if(a==='cardFilter'){ cardFilter=v; render(); return; }
+  if(a==='exportCsv'){ exportCsv(); return; }
+  if(a==='payCard'){ const c=S.cards.find(x=>x.id===id); if(c) paySheet(c); return; }
+  if(a==='backNcp'){ ncpSheet(v); return; }
+  if(a==='unpayCard'){ const c=S.cards.find(x=>x.id===id); if(!c) return; if(!confirmTwice(a+id,b)){ b.textContent='再按一次改回未付款'; return; } ncpSheet(c.phone); await run(()=>patch('cards',c.id,{paid:false,paidAt:null,paidAmount:null,payMethod:null,paidNote:null}),'已改回未付款'); return; }
+  if(a==='ncp'){ const m=S.members.find(x=>x.id===id); if(m) ncpSheet(m.phone); return; }
+  if(a==='staffCheckin'){ const c=S.cards.find(x=>x.id===id); if(!c) return; b.disabled=true; await run(()=>api('admin/checkin',{cardId:c.id}),`已帮会员打卡，+${ckPts(c.phone)} 分`); return; }
+  if(a==='resetPin'){ const m=S.members.find(x=>x.id===id); if(!m) return; if(!confirmTwice(a+id,b)){ b.textContent='再按一次确认重设'; return; } closeSheet(); await run(()=>api('admin/resetpin',{phone:m.phone}),'密码已重设，会员下次登入时可以设定新密码'); return; }
+  if(a==='undoCheckin'){ const k=cardInfo(S.cards.find(x=>x.id===id)||{}); const last=k.ins&&k.ins[k.ins.length-1]; if(!last) return; if(!confirmTwice(a+id,b)) {b.textContent='再按一次撤销 '+last.date; return;} await run(()=>del('checkins',last.id),'已撤销 '+last.date+' 的打卡'+(last.points?'，并扣回 '+last.points+' 分':'')); return; }
+  if(a==='delCard'&&confirmTwice(a+id,b)){ await run(()=>del('cards',id),'卡已删除（已赚到的积分会保留）'); return; }
+  if(a==='approve'){ const r=S.requests.find(x=>x.id===id); if(!r) return; b.disabled=true;
+    await run(()=>api('admin/approve',{id:r.id}),r.type==='renew'?'已通过，新卡已开通，已通知会员':'已通过，已通知会员'); return; }
+  if(a==='reject'){ b.disabled=true; await run(()=>api('admin/reject',{id}),'已拒绝，已通知会员'); return; }
+  if(a==='delNotice'){ if(!confirmTwice(a+id,b)){ b.textContent='再按一次确认删除'; return; } await run(()=>del('notices',id),'公告已删除'); return; }
+  if(a==='editReward'){ rewardForm(S.rewards.find(x=>x.id===id)); return; }
+  if(a==='editTask'){ taskForm(S.tasks.find(x=>x.id===id)); return; }
+  if(a==='editMember'){ memberForm(S.members.find(x=>x.id===id)); return; }
+  if(a==='addPts'){ const m=S.members.find(x=>x.id===id); if(m) ptsForm(m); return; }
+  if(a==='delReward'&&confirmTwice(a+id,b)){ await run(()=>del('rewards',id),'礼物已删除'); closeSheet(); return; }
+  if(a==='delTask'&&confirmTwice(a+id,b)){ await run(()=>del('tasks',id),'任务已删除'); closeSheet(); return; }
+  if(a==='delMember'&&confirmTwice(a+id,b)){ await run(()=>del('members',id),'会员已删除'); closeSheet(); return; }
+  if(a==='clearHomePhoto'){ await run(()=>putSettings({...S.settings,photo:null,photoUrl:null}),'照片已移除'); return; }
+});
+
+document.addEventListener('change',e=>{
+  if(e.target.id==='sFrom'){ statFrom=e.target.value||null; render(); }
+  if(e.target.id==='sTo'){ statTo=e.target.value||null; render(); }
+});
+document.addEventListener('submit',async e=>{
+  e.preventDefault(); const f=e.target; const g=id=>document.getElementById(id).value.trim();
+  if(f.id==='loginForm'){ loginPhone=g('ph').replace(/\D/g,''); if(!loginPhone) return toast('请输入手机号码');
+    try{ const r=await api('login/check',{phone:loginPhone}); if(!r.exists){ loginStep='register'; render(); setTimeout(()=>document.getElementById('rname')?.focus(),50); return; } loginName=r.name; loginStep=r.hasPin?'pin':'setpin'; render(); setTimeout(()=>document.getElementById('pin1')?.focus(),50); }
+    catch(err){ toast(err.message); } return; }
+  if(f.id==='pinForm'||f.id==='setPinForm'){ const p1=g('pin1'); if(!/^\d{4}$/.test(p1)) return toast('密码要是 4 个数字');
+    if(f.id==='setPinForm'&&p1!==g('pin2')) return toast('两次输入的密码不一样');
+    try{ const r=await api('login',{phone:loginPhone,pin:p1,setPin:f.id==='setPinForm'}); token=r.token; ls.set('vw_token',token); loginStep='phone'; await refresh(); toast('欢迎，'+r.name); }
+    catch(err){ toast(err.message); if(err.code==='need_pin'){ loginStep='setpin'; render(); } } return; }
+  if(f.id==='regForm'){ const nm=g('rname'), p1=g('pin1'); if(!nm) return toast('请输入你的名字'); if(!/^\d{4}$/.test(p1)) return toast('密码要是 4 个数字'); if(p1!==g('pin2')) return toast('两次输入的密码不一样');
+    try{ const r=await api('register',{phone:loginPhone,name:nm,pin:p1}); token=r.token; ls.set('vw_token',token); loginStep='phone'; await refresh(); toast('注册成功，欢迎 '+r.name+'！'); }
+    catch(err){ toast(err.message); if(err.code==='exists'){ loginStep='phone'; render(); } } return; }
+  if(f.id==='adminForm'){ try{ const r=await api('admin/login',{password:document.getElementById('apw').value}); adminToken=r.token; ls.set('vw_admin',adminToken); closeSheet(); view='admin'; await refresh(); toast('已登入管理后台'); }catch(err){ toast(err.message); } return; }
+  if(!isAdmin) return;
+  if(f.id==='rf'){ const id=f.dataset.id||null; const old=S.rewards.find(x=>x.id===id)||{};
+    const data={name:g('f_n'),en:g('f_en'),cat:g('f_c'),points:+g('f_p')||0,stock:g('f_s')===''?null:+g('f_s'),active:g('f_a')==='1',desc:g('f_d'),
+      photo:old.photo||null,photoUrl:old.photoUrl||null,order:old.order??Date.now(),...(pendingPhoto||{})};
+    closeSheet(); await run(()=>put('rewards',id,data),'礼物已保存'); return; }
+  if(f.id==='tf'){ const id=f.dataset.id||null; const old=S.tasks.find(x=>x.id===id)||{};
+    const td={...old,name:g('t_n'),en:g('t_en'),points:+g('t_p')||0,icon:g('t_i'),note:g('t_no'),promo:g('t_pr')==='1',active:g('t_a')==='1',order:old.order??Date.now()}; delete td.id; closeSheet(); await run(()=>put('tasks',id,td),'任务已保存'); return; }
+  if(f.id==='mf'){ const id=f.dataset.id||null; const phone=g('m_p').replace(/\D/g,''); if(!phone) return toast('请输入手机号码');
+    const old=S.members.find(x=>x.id===id);
+    if(!old&&S.members.some(x=>x.phone===phone)) return toast('这个号码已经是会员');
+    const nm=g('m_n'), tr=g('m_t')||null, p10=Math.max(0,parseInt(g('m_p10'),10)||0), p30=Math.max(0,parseInt(g('m_p30'),10)||0); closeSheet(); await run(()=>old?patch('members',old.id,{name:nm,tierOverride:tr,prior10:p10,prior30:p30}):put('members',phone,{name:nm,phone,tierOverride:tr,prior10:p10,prior30:p30,points:0,joined:dt(Date.now())}),'会员已保存'); return; }
+  if(f.id==='pf'){ const m=S.members.find(x=>x.id===f.dataset.id); const v=parseInt(g('p_v'),10); if(!m||!v) return toast('请输入积分');
+    const reason=g('p_r')||(v>0?'教练加分':'教练扣分'); closeSheet(); await run(()=>adjust(m.phone,v,reason),v>0?`已加 ${v} 分`:`已扣 ${-v} 分`); return; }
+  if(f.id==='cf'){ const phone=f.dataset.phone; const t=+g('c_t'), d=+g('c_d')||null; if(!t||!g('c_s')) return toast('请填写次数和开始日期');
+    const fresh={n:CARD_TYPES[0].n,t:CARD_TYPES[0].total,d:'',s:today()};
+    const paidNow=g('c_pay')==='1';
+    await run(()=>put('cards',null,{phone,name:g('c_n')||'NCP',kind:(g('c_ty')==='x'?'other':(CARD_TYPES[+g('c_ty')]||{}).kind)||'other',total:t,days:d,start:g('c_s'),ts:Date.now(),paid:paidNow,paidAt:paidNow?today():null}),paidNow?'新卡已开通（已付款）':'新卡已开通，记得收款后按「确认已付款」');
+    ['c_n','c_t','c_d','c_s'].forEach((x,i)=>{const el=document.getElementById(x); if(el) el.value=[fresh.n,fresh.t,fresh.d,fresh.s][i];}); return; }
+  if(f.id==='payForm'){ const c=S.cards.find(x=>x.id===f.dataset.id); if(!c) return; const d={paid:true,paidAt:g('pa_d')||today(),paidAmount:g('pa_a').replace(/[^0-9.]/g,'')||null,payMethod:g('pa_m'),paidNote:g('pa_n')||null};
+    ncpSheet(c.phone); await run(()=>patch('cards',c.id,d),'已确认付款 '+d.paidAt); return; }
+  if(f.id==='noticeForm'){ const d={title:g('n_t'),body:g('n_b'),en_title:g('n_et'),en_body:g('n_eb'),ms_title:g('n_mt'),ms_body:g('n_mb')};
+    if(!d.title&&!d.body) return toast('请输入公告内容');
+    const btn=f.querySelector('button[type=submit]'); btn.disabled=true;
+    try{ const r=await api('admin/notice',d); let sent=0, off=0, guard=0;
+      while(r.total&&guard++<500){ toast(`正在发送… ${sent}/${r.total}`); const x=await api('admin/pushbatch',{id:r.id,offset:off}); sent+=x.sent; off=x.next; if(x.done||(!x.sent&&!x.failed)) break; }
+      f.reset(); toast(r.total?`公告已发出，${sent} 部手机收到通知`:'公告已发出，会员打开 App 就会看到'); }
+    catch(err){ toast('没有成功：'+(err.message||'请稍后再试')); }
+    btn.disabled=false; await refresh().catch(()=>{}); return; }
+  if(f.id==='brandForm'){ const d={brandName:g('b_n')||null,brandSub:g('b_s')||null,brandShort:g('b_sh')||null}; await run(()=>putSettings({...S.settings,...d}),'俱乐部资料已更新'); return; }
+  if(f.id==='homeForm'){ await run(()=>putSettings({...S.settings,eyebrow:g('h_e'),title:g('h_t'),sub:g('h_s'),title_en:g('h_ten')||null,title_ms:g('h_tms')||null,sub_en:g('h_sen')||null,sub_ms:g('h_sms')||null,terms:g('h_terms')||null}),'首页已更新'); return; }
+});
+
+async function saveQrPoster(){
+  const src=document.querySelector('#qrbox canvas'); if(!src) return toast('二维码还没准备好');
+  const W=900,H=1200,c=document.createElement('canvas'); c.width=W;c.height=H; const x=c.getContext('2d');
+  x.fillStyle='#FBF5F3';x.fillRect(0,0,W,H); x.fillStyle='#7A1E3A';x.fillRect(0,0,W,260);
+  x.fillStyle='#FFF7F2';x.textAlign='center';x.font='900 72px "Noto Serif SC",serif';x.fillText('NCP 打卡',W/2,140);
+  x.font='500 30px "Noto Sans SC",sans-serif';x.fillText(brand().name+' · '+brand().sub,W/2,200);
+  x.fillStyle='#fff';x.fillRect(170,330,560,560); x.drawImage(src,200,360,500,500);
+  x.fillStyle='#2A1419';x.font='700 40px "Noto Sans SC",sans-serif';x.fillText('打开相机扫一扫，完成今日打卡',W/2,980);
+  x.fillStyle='#7D6A6E';x.font='400 28px "Noto Sans SC",sans-serif';x.fillText(qrMode()==='daily'?'本二维码仅限 '+today()+' 使用':'Scan to check in every visit',W/2,1040);
+  const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  const u=URL.createObjectURL(blob); const lnk=document.createElement('a'); lnk.href=u; lnk.download=fileTag()+'-NCP打卡二维码'+(qrMode()==='daily'?'-'+today():'')+'.png';
+  document.body.appendChild(lnk); lnk.click(); lnk.remove(); setTimeout(()=>URL.revokeObjectURL(u),5000); toast('二维码海报已下载');
+}
+
+/* ---------- daily stats ---------- */
+function rangeOf(){
+  if(statRange>0){ const t=parseD(today()); return {from:dt(t-(statRange-1)*DAY), to:today()}; }
+  let from=statFrom||dt(parseD(today())-29*DAY), to=statTo||today(); if(from>to) [from,to]=[to,from];
+  if((parseD(to)-parseD(from))/DAY>365) from=dt(parseD(to)-365*DAY);
+  return {from,to};
+}
+function dailyStats(from,to){
+  if(!from){ const r=rangeOf(); from=r.from; to=r.to; }
+  const out=[]; for(let t=parseD(from);t<=parseD(to);t+=DAY){ const date=dt(t); const ins=S.checkins.filter(x=>x.date===date);
+    const staff=ins.filter(x=>x.by==='staff').length;
+    out.push({date,n:ins.length,self:ins.length-staff,staff,u:new Set(ins.map(x=>x.phone)).size,pts:ins.reduce((a,x)=>a+(+x.points||0),0)}); }
+  return out;
+}
+const howOf=b=>b==='staff'?'帮':'自';
+const howTag=b=>`<span class="how ${b==='staff'?'h-staff':'h-self'}" title="${b==='staff'?'教练帮打':'顾客自己扫码'}">${howOf(b)}</span>`;
+const HOW_LEGEND='自 = 顾客自己扫码　帮 = 教练帮打';
+function checkinRows(){
+  const {from,to}=rangeOf();
+  return S.checkins.filter(x=>x.date>=from&&x.date<=to).sort((a,b)=>a.ts-b.ts).map(x=>{
+    const m=S.members.find(y=>y.phone===x.phone), c=S.cards.find(y=>y.id===x.cardId), d=new Date(x.ts);
+    return {date:x.date,time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),name:m?m.name:'',phone:x.phone,card:c?('第 '+cardNo(c)+' 张 · '+c.name):'',how:howOf(x.by),pts:+x.points||0};
+  });
+}
+function exportDailyPdf(){
+  const days=dailyStats().slice().reverse(); const sum=days.reduce((a,d)=>a+d.n,0);
+  const pa=document.getElementById('printArea');
+  pa.innerHTML=`<h1>${nt(brand().name)} · 每日打卡统计</h1><div class="meta">${days[days.length-1].date} 至 ${days[0].date}（${days.length} 天）　·　共 ${sum} 人次　·　${new Set(S.checkins.filter(x=>x.date>=days[days.length-1].date&&x.date<=days[0].date).map(x=>x.phone)).size} 位不同会员　·　导出日期 ${today()}</div>
+  <div class="meta">${HOW_LEGEND}</div><h2>每日汇总</h2><table><thead><tr><th>日期</th><th>星期</th><th>打卡人次</th><th>自</th><th>帮</th><th>打卡人数</th><th>自动加分</th></tr></thead><tbody>
+  ${days.map(d=>`<tr><td>${d.date}</td><td>${'日一二三四五六'[new Date(parseD(d.date)).getDay()]}</td><td>${d.n}</td><td>${d.self}</td><td>${d.staff}</td><td>${d.u}</td><td>${d.pts}</td></tr>`).join('')}</tbody></table>
+  <h2>打卡明细</h2><table><thead><tr><th>日期</th><th>时间</th><th>会员</th><th>电话</th><th>卡</th><th>自/帮</th><th>加分</th></tr></thead><tbody>
+  ${checkinRows().map(r=>`<tr><td>${r.date}</td><td>${r.time}</td><td>${nt(r.name)}</td><td>${esc(r.phone)}</td><td>${esc(r.card)}</td><td>${r.how==='帮'?'<b>帮</b>':r.how}</td><td>${r.pts}</td></tr>`).join('')||'<tr><td colspan="7">这段期间没有打卡记录</td></tr>'}</tbody></table>`;
+  pa.hidden=false; const done=()=>{ pa.hidden=true; pa.innerHTML=''; window.removeEventListener('afterprint',done); };
+  window.addEventListener('afterprint',done); setTimeout(()=>window.print(),100); toast('在打印画面选择「另存为 PDF / Save as PDF」');
+}
+function exportDailyCsv(){
+  const qn=v=>'"'+String(v??'').replace(/"/g,'""')+'"', q=v=>qn(trText(String(v??'')));
+  const rows=[['日期','星期','打卡人次','自','帮','打卡人数','自动加分'].map(q).join(',')].concat(dailyStats().slice().reverse().map(d=>[d.date,'星期'+'日一二三四五六'[new Date(parseD(d.date)).getDay()],d.n,d.self,d.staff,d.u,d.pts].map(q).join(',')));
+  rows.push('',q(HOW_LEGEND),['日期','时间','会员','电话','卡','自/帮','加分'].map(q).join(','));
+  checkinRows().forEach(r=>rows.push([q(r.date),q(r.time),qn(r.name),qn("'"+r.phone),q(r.card),q(r.how),q(r.pts)].join(',')));
+  const blob=new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const u=URL.createObjectURL(blob), a=document.createElement('a'); a.href=u; a.download=fileTag()+'-每日打卡-'+rangeOf().from+'至'+rangeOf().to+'.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),5000);
+  toast('Excel 已下载');
+}
+
+/* ---------- export ---------- */
+function reportRows(){
+  return S.members.slice().sort((a,b)=>a.name.localeCompare(b.name,'zh')).map(m=>({m,st:memberStats(m)}));
+}
+function exportPdf(){
+  const rows=reportRows(), d=dt(Date.now());
+  const st=k=>({active:'进行中',done:'已用完',expired:'已过期'})[k]||'';
+  const html=`<h1>${nt(brand().name)} · 会员报表</h1><div class="meta">导出日期：${d}　·　会员 ${rows.length} 人　·　NCP 卡 ${S.cards.length} 张（未付款 ${S.cards.filter(c=>!c.paid).length} 张）　·　累计打卡 ${S.checkins.length} 次</div>
+  <h2>会员总表</h2><table><thead><tr><th>#</th><th>名字</th><th>电话</th><th>等级</th><th>积分</th><th>买过几张卡</th><th>未付款</th><th>目前的卡</th><th>剩余次数</th><th>累计打卡</th><th>最近打卡</th><th>加入日期</th></tr></thead><tbody>
+  ${rows.map(({m,st:x},i)=>`<tr><td>${i+1}</td><td>${nt(m.name)}</td><td>${esc(m.phone)}</td><td>${esc(m.tier)}</td><td>${fmt(x.pts)}</td><td>${x.nCards}</td><td>${unpaidOf(m.phone)||'—'}</td><td>${x.cur?'第 '+cardNo(x.cur)+' 张 · '+esc(x.cur.name)+'（'+st(x.curInfo.status)+'）':'—'}</td><td>${x.curInfo?x.curInfo.left:'—'}</td><td>${x.nCheckins}</td><td>${x.last||'—'}</td><td>${esc(m.joined||'')}</td></tr>`).join('')}</tbody></table>
+  <h2>每位会员的卡记录</h2>
+  ${rows.filter(r=>r.st.nCards).map(({m,st:x})=>`<div class="mb"><b>${nt(m.name)}（${esc(m.phone)}）</b><table><thead><tr><th>第几张</th><th>配套</th><th>开卡日期</th><th>总次数</th><th>已打卡</th><th>剩余</th><th>状态</th><th>付款</th><th>付款日期</th><th>金额</th><th>最后一次打卡</th></tr></thead><tbody>
+    ${x.cards.map((c,i)=>{const k=cardInfo(c);const last=k.ins[k.ins.length-1];return `<tr><td>第 ${i+1} 张</td><td>${esc(c.name)}</td><td>${esc(c.start)}</td><td>${+c.total||0}</td><td>${k.used}</td><td>${k.left}</td><td>${st(k.status)}</td><td>${c.paid?'已付款':'<b>未付款</b>'}</td><td>${c.paid?esc(c.paidAt||''):'—'}</td><td>${c.paidAmount?'RM'+esc(c.paidAmount):'—'}</td><td>${last?last.date:'—'}</td></tr>`}).join('')}</tbody></table></div>`).join('')||'<p>还没有任何 NCP 卡记录。</p>'}`;
+  const pa=document.getElementById('printArea'); pa.innerHTML=html; pa.hidden=false;
+  const done=()=>{ pa.hidden=true; pa.innerHTML=''; window.removeEventListener('afterprint',done); };
+  window.addEventListener('afterprint',done);
+  setTimeout(()=>{ window.print(); setTimeout(()=>{ if(!pa.hidden&&!matchMedia('print').matches) done(); },1500); },100);
+  toast('在打印画面选择「另存为 PDF / Save as PDF」');
+}
+function exportCsv(){
+  const qn=v=>'"'+String(v??'').replace(/"/g,'""')+'"', q=v=>qn(trText(String(v??'')));
+  const head=['名字','电话','等级','积分','买过几张卡','未付款卡','目前第几张','目前配套','剩余次数','累计打卡','最近打卡','加入日期'];
+  const lines=[head.map(q).join(',')].concat(reportRows().map(({m,st:x})=>[qn(m.name),qn("'"+m.phone)].concat([m.tier,x.pts,x.nCards,unpaidOf(m.phone),x.cur?cardNo(x.cur):'',x.cur?x.cur.name:'',x.curInfo?x.curInfo.left:'',x.nCheckins,x.last,m.joined||''].map(q)).join(',')));
+  const card=['电话','名字','第几张','配套','开卡日期','总次数','已打卡','剩余','状态','付款','付款日期','金额 RM','付款方式','备注'];
+  const cl=[card.map(q).join(',')];
+  reportRows().forEach(({m,st:x})=>x.cards.forEach((c,i)=>{const k=cardInfo(c); cl.push([qn("'"+m.phone),qn(m.name)].concat([i+1,c.name,c.start,+c.total||0,k.used,k.left,({active:'进行中',done:'已用完',expired:'已过期'})[k.status],c.paid?'已付款':'未付款',c.paid?c.paidAt:'',c.paidAmount||'',c.payMethod||'',c.paidNote||''].map(q)).join(','));}));
+  const blob=new Blob(['\ufeff'+lines.join('\r\n')+'\r\n\r\n'+cl.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const u=URL.createObjectURL(blob), a=document.createElement('a'); a.href=u; a.download=fileTag()+'-会员报表-'+dt(Date.now())+'.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),5000);
+  toast('Excel 报表已下载');
+}
+
+/* ---------- boot ---------- */
+document.documentElement.lang=LANG; trWatch();
+readHash(); window.addEventListener('hashchange',()=>{readHash(); render(); if(location.hash==='#admin'){ if(isAdmin){ view='admin'; render(); } else document.querySelector('[data-act="adminLogin"]')?.click(); }});
+async function boot(){
+  try{ await refresh();
+    if(location.hash==='#admin'){ if(isAdmin){ view='admin'; render(); } else document.querySelector('[data-act="adminLogin"]')?.click(); }
+    if(location.hash==='#notices'){ try{history.replaceState(null,'',location.pathname+location.search)}catch(_){} openNotices(); } }
+  catch(e){ document.getElementById('app').innerHTML=`<div class="load"><div style="font-family:var(--f-display);font-size:26px;color:var(--wine)">${nt(brand().name)}</div><div>${esc(e.message)}</div><button class="btn" onclick="boot()">再试一次</button></div>`; }
+}
+if('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message',e=>{ if(e.data&&e.data.type==='open-notices') refresh().then(openNotices).catch(()=>{}); });
+boot();
+setInterval(()=>{ if(document.visibilityState==='visible'&&!document.getElementById('layer').innerHTML&&!document.activeElement?.matches('input,textarea,select')) refresh().catch(()=>{}); },30000);
+</script>
+</body>
+</html>

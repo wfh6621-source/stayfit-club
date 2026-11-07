@@ -1,0 +1,10 @@
+{
+  // NC Loyalty Program —— 营养俱乐部会员积分 App
+  "name": "stayfit-club",
+  "main": "worker.js",
+  "compatibility_date": "2025-06-01",
+  "d1_databases": [
+    { "binding": "DB", "database_name": "nc-loyalty-db", "database_id": "6ab1ffb5-ef3d-41dc-9309-159060c83c25" }
+  ],
+  "observability": { "enabled": true }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "stayfit-club",
+  "private": true,
+  "description": "营养俱乐部会员积分、NCP 卡扫码打卡、礼物兑换 App",
+  "cloudflare": {
+    "bindings": {
+      "ADMIN_PASSWORD": {
+        "description": "店家后台的登入密码。请设一个你记得住、别人猜不到的密码，之后在 App 的「店家登入」用它进入管理后台。"
+      },
+      "DB": {
+        "description": "存放会员、积分、打卡和礼物资料的资料库，会自动建立，不用改。"
+      }
+    }
+  }
+}
